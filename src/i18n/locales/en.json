@@ -1,0 +1,231 @@
+{
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "categories": "Categories",
+    "about": "About",
+    "contact": "Contact",
+    "novaShop": "Nova Shop"
+  },
+  "hero": {
+    "title": "Welcome to Nova Shop",
+    "subtitle": "Discover amazing products at unbeatable prices",
+    "cta": "Shop Now",
+    "learnMore": "Learn More",
+    "newArrivals": "New Arrivals"
+  },
+  "footer": {
+    "about": "About Us",
+    "aboutDesc": "Your trusted online shopping destination",
+    "quickLinks": "Quick Links",
+    "customerService": "Customer Service",
+    "followUs": "Follow Us",
+    "allRightsReserved": "All rights reserved",
+    "privacyPolicy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "faq": "FAQ",
+    "shipping": "Shipping Info",
+    "returns": "Returns",
+    "home": "Home",
+    "products": "Products",
+    "categories": "Categories",
+    "contact": "Contact"
+  },
+  "common": {
+    "language": "عربي",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "about": {
+    "title": "About Nova Shop",
+    "subtitle": "Your trusted partner in online shopping",
+    "mission": {
+      "title": "Our Mission",
+      "content": "At Nova Shop, we're committed to revolutionizing the online shopping experience. We believe that everyone deserves access to quality products at fair prices, delivered with exceptional customer service."
+    },
+    "vision": {
+      "title": "Our Vision",
+      "content": "To become the most trusted e-commerce platform in the region, connecting merchants with customers through innovative technology and outstanding service."
+    },
+    "values": {
+      "title": "Our Values",
+      "quality": {
+        "title": "Quality First",
+        "description": "We carefully curate every product to ensure the highest standards"
+      },
+      "trust": {
+        "title": "Trust & Transparency",
+        "description": "Honest pricing, clear policies, and reliable service"
+      },
+      "innovation": {
+        "title": "Continuous Innovation",
+        "description": "Always improving to serve you better"
+      },
+      "customer": {
+        "title": "Customer Focused",
+        "description": "Your satisfaction is our top priority"
+      }
+    },
+    "story": {
+      "title": "Our Story",
+      "content": "Founded in 2024, Nova Shop started with a simple idea: make online shopping accessible, reliable, and enjoyable for everyone. Today, we serve thousands of happy customers and partner with hundreds of trusted merchants."
+    },
+    "stats": {
+      "customers": "Happy Customers",
+      "merchants": "Trusted Merchants",
+      "products": "Quality Products",
+      "countries": "Countries Served"
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "We'd love to hear from you",
+    "form": {
+      "title": "Send us a message",
+      "name": "Full Name",
+      "namePlaceholder": "John Doe",
+      "email": "Email Address",
+      "emailPlaceholder": "john@example.com",
+      "subject": "Subject",
+      "subjectPlaceholder": "How can we help?",
+      "message": "Message",
+      "messagePlaceholder": "Tell us more...",
+      "submit": "Send Message",
+      "sending": "Sending...",
+      "success": "Message sent successfully!",
+      "error": "Failed to send message. Please try again."
+    },
+    "info": {
+      "title": "Get in Touch",
+      "description": "Have questions? We're here to help!",
+      "email": {
+        "title": "Email",
+        "value": "support@novashop.com"
+      },
+      "phone": {
+        "title": "Phone",
+        "value": "+20 123 456 7890"
+      },
+      "address": {
+        "title": "Address",
+        "value": "Cairo, Egypt"
+      },
+      "hours": {
+        "title": "Business Hours",
+        "value": "Mon - Fri: 9:00 AM - 6:00 PM"
+      }
+    }
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated",
+    "intro": "At Nova Shop, we take your privacy seriously. This Privacy Policy explains how we collect, use, and protect your personal information.",
+    "sections": {
+      "collection": {
+        "title": "Information We Collect",
+        "content": "We collect information you provide directly to us, including name, email address, shipping address, and payment information. We also automatically collect certain information about your device and usage patterns."
+      },
+      "usage": {
+        "title": "How We Use Your Information",
+        "content": "We use your information to process orders, communicate with you, improve our services, and comply with legal obligations. We never sell your personal information to third parties."
+      },
+      "security": {
+        "title": "Data Security",
+        "content": "We implement industry-standard security measures to protect your personal information. All payment transactions are encrypted using SSL technology."
+      },
+      "cookies": {
+        "title": "Cookies",
+        "content": "We use cookies to enhance your browsing experience, analyze site traffic, and personalize content. You can control cookie preferences through your browser settings."
+      },
+      "rights": {
+        "title": "Your Rights",
+        "content": "You have the right to access, correct, or delete your personal information. Contact us at privacy@novashop.com to exercise these rights."
+      }
+    },
+    "questionsTitle": "Questions?",
+    "privacyQuestionsNotice": "If you have any questions about this Privacy Policy, please contact us at:"
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "lastUpdated": "Last updated",
+    "intro": "Welcome to Nova Shop. By using our services, you agree to these terms. Please read them carefully.",
+    "sections": {
+      "account": {
+        "title": "Account Terms",
+        "content": "You must be 18 years or older to use this service. You are responsible for maintaining the security of your account and password. Nova Shop cannot be held liable for any loss or damage from your failure to comply with this security obligation."
+      },
+      "purchases": {
+        "title": "Purchase Terms",
+        "content": "All purchases are subject to product availability. Prices are subject to change without notice. We reserve the right to refuse or cancel any order for any reason."
+      },
+      "returns": {
+        "title": "Returns & Refunds",
+        "content": "Most items can be returned within 30 days of delivery. Items must be unused and in original packaging. Refunds will be processed within 5-10 business days."
+      },
+      "prohibited": {
+        "title": "Prohibited Uses",
+        "content": "You may not use our service for any illegal purpose or to violate any laws. You may not attempt to gain unauthorized access to any portion of the service."
+      },
+      "liability": {
+        "title": "Limitation of Liability",
+        "content": "Nova Shop shall not be liable for any indirect, incidental, special, consequential or punitive damages resulting from your use of the service."
+      }
+    },
+    "legal": {
+      "agreementTitle": "Agreement",
+      "agreementNotice": "By using Nova Shop, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.",
+      "questionsTitle": "Questions?",
+      "questionsNotice": "If you have any questions about these Terms, please contact us at:"
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Find answers to common questions",
+    "categories": {
+      "general": "General",
+      "orders": "Orders",
+      "shipping": "Shipping",
+      "returns": "Returns & Refunds",
+      "account": "Account"
+    },
+    "questions": {
+      "q1": {
+        "question": "How do I create an account?",
+        "answer": "Click on the 'Sign Up' button in the top right corner. Fill in your details including name, email, and password. You'll receive a confirmation email to verify your account."
+      },
+      "q2": {
+        "question": "What payment methods do you accept?",
+        "answer": "We accept all major credit cards (Visa, Mastercard, American Express), PayPal, and Apple Pay. All payments are securely processed using industry-standard encryption."
+      },
+      "q3": {
+        "question": "How can I track my order?",
+        "answer": "Once your order ships, you'll receive a tracking number via email. You can also view your order status by logging into your account and visiting the 'My Orders' section."
+      },
+      "q4": {
+        "question": "How long does shipping take?",
+        "answer": "Standard shipping typically takes 3-5 business days. Express shipping options are available at checkout for faster delivery (1-2 business days)."
+      },
+      "q5": {
+        "question": "What is your return policy?",
+        "answer": "We offer a 30-day return policy on most items. Products must be unused and in original packaging. Simply contact our support team to initiate a return."
+      },
+      "q6": {
+        "question": "How do I contact customer support?",
+        "answer": "You can reach us via email at support@novashop.com, call us at +20 123 456 7890, or use the contact form on our Contact page. We're available Monday-Friday, 9 AM - 6 PM."
+      },
+      "q7": {
+        "question": "Do you ship internationally?",
+        "answer": "Yes! We ship to over 15 countries. Shipping costs and delivery times vary by destination. International orders may be subject to customs fees."
+      },
+      "q8": {
+        "question": "How do I change or cancel my order?",
+        "answer": "Orders can be modified or cancelled within 1 hour of placement. After that, please contact our support team and we'll do our best to help."
+      }
+    },
+    "supportDesc": "Our support team is always ready to assist you",
+    "stillNeedHelp": "Still need help?",
+    "contactSupport": "Contact our support team"
+  }
+}

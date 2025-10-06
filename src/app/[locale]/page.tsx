@@ -1,0 +1,11 @@
+// src/app/[locale]/page.tsx
+import HeroSection from "@/components/sections/HeroSection";
+
+export default function Home() {
+  return (
+    <div>
+      <HeroSection />
+      {/* Add more sections here */}
+    </div>
+  );
+}
