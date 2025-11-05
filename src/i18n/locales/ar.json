@@ -5,7 +5,12 @@
     "categories": "الأقسام",
     "about": "من نحن",
     "contact": "تواصل معنا",
-    "novaShop": "نوڤا شوب"
+    "novaShop": "نوڤا شوب",
+    "profile": "الملف الشخصي",
+    "orders": "الطلبات",
+    "settings": "الإعدادات",
+    "logout": "تسجيل الخروج",
+    "login": "تسجيل الدخول"
   },
   "hero": {
     "title": "مرحباً بك في نوڤا شوب",
@@ -227,5 +232,172 @@
     "stillNeedHelp": "لا تزال بحاجة للمساعدة؟",
     "supportDesc": "فريق الدعم لدينا مستعد دائمًا لمساعدتك",
     "contactSupport": "اتصل بفريق الدعم"
+  },
+  "auth": {
+    "signUp": {
+      "title": "إنشاء حساب جديد",
+      "description": "أدخل بياناتك لإنشاء حساب",
+      "withEmail": "بالإيميل",
+      "withPhone": "بالموبايل",
+      "submit": "إنشاء حساب",
+      "orContinueWith": "أو تابع مع",
+      "continueWithGoogle": "تابع مع جوجل",
+      "alreadyHaveAccount": "هل لديك حساب بالفعل؟",
+      "signInLink": "تسجيل الدخول",
+      "name": {
+        "label": "الاسم الكامل",
+        "description": "الاسم الذي سيظهر في حسابك.",
+        "placeholder": "أدخل اسمك"
+      },
+      "email": {
+        "label": "البريد الإلكتروني",
+        "description": "سنرسل رمز التحقق إلى هذا البريد.",
+        "placeholder": "example@domain.com"
+      },
+      "phone": {
+        "label": "رقم الهاتف",
+        "description": "سنرسل رمز التحقق إلى هذا الرقم.",
+        "placeholder": "011 1111 1111"
+      },
+      "password": {
+        "label": "كلمة المرور",
+        "description": "يجب أن تكون 8 أحرف على الأقل.",
+        "placeholder": "أدخل كلمة المرور"
+      },
+      "confirmPassword": {
+        "label": "تأكيد كلمة المرور",
+        "description": "أعد إدخال كلمة المرور للمطابقة.",
+        "placeholder": "أعد إدخال كلمة المرور"
+      }
+    },
+    "login": {
+      "title": "تسجيل الدخول",
+      "description": "أدخل بياناتك للدخول إلى حسابك",
+      "emailOrPhone": "البريد الإلكتروني أو الموبايل",
+      "emailOrPhonePlaceholder": "أدخل البريد أو رقم الموبايل",
+      "password": "كلمة المرور",
+      "forgotPassword": "نسيت كلمة المرور؟",
+      "submit": "تسجيل الدخول",
+      "orContinueWith": "أو تابع مع",
+      "continueWithGoogle": "تابع مع جوجل",
+      "dontHaveAccount": "ليس لديك حساب؟",
+      "signUpLink": "إنشاء حساب",
+      "emailOrPhoneDescription": "أدخل البريد الإلكتروني أو رقم الهاتف المرتبط بحسابك.",
+      "passwordDescription": "أدخل كلمة المرور الخاصة بحسابك للمتابعة.",
+      "passwordPlaceholder": "أدخل كلمة المرور",
+      "emailVerifiedTitle": "تم التحقق من البريد الإلكتروني بنجاح!",
+      "emailVerifiedMessage": "يمكنك الآن تسجيل الدخول إلى حسابك.",
+      "passwordResetSuccess": "تم إعادة تعيين كلمة المرور بنجاح! يرجى تسجيل الدخول بكلمة المرور الجديدة.",
+      "passwordChangedMessage": "تم تغيير كلمة المرور الخاصة بك. يرجى تسجيل الدخول مرة أخرى للأمان.",
+      "missingCredentials": "يرجى إدخال البريد الإلكتروني/الهاتف وكلمة المرور",
+      "invalidCredentials": "بيانات الدخول غير صحيحة",
+      "notVerified": "يرجى التحقق من حسابك أولاً",
+      "accountDeactivated": "تم تعطيل حسابك"
+    },
+    "messages": {
+      "invalidCredentials": "بيانات الدخول غير صحيحة.",
+      "loggedIn": "تم تسجيل الدخول بنجاح.",
+      "generalError": "حدث خطأ ما، يرجى المحاولة لاحقًا."
+    },
+    "verifyRequest": {
+      "title": "تحقق من بريدك الإلكتروني",
+      "description": "لقد أرسلنا رابط التحقق إلى ",
+      "instructions": {
+        "heading": "لإكمال تسجيلك:",
+        "step1": "اذهب إلى صندوق بريدك الوارد.",
+        "step2": "انقر على رابط التحقق في الرسالة.",
+        "step3": "عد إلى هنا لتسجيل الدخول."
+      },
+      "expirationInfo": "صلاحية رابط التحقق ستنتهي خلال 24 ساعة.",
+      "resendPrompt": "لم تستلم البريد الإلكتروني؟",
+      "resendSuccess": "تم إرسال بريد التحقق بنجاح!",
+      "resendErrorDefault": "فشل في إرسال البريد. يرجى المحاولة لاحقاً.",
+      "button": {
+        "sending": "جاري الإرسال...",
+        "resend": "إعادة إرسال البريد",
+        "countdown": "إعادة الإرسال بعد {count} ثانية"
+      },
+      "tips": {
+        "heading": "نصائح:",
+        "tip1": "تحقق من مجلد الرسائل غير المرغوب فيها (Spam/Junk).",
+        "tip2": "تأكد من صحة عنوان البريد الإلكتروني.",
+        "tip3": "أضف بريدنا الإلكتروني إلى جهات الاتصال الخاصة بك.",
+        "tip4": "انتظر بضع دقائق لوصول الرسالة."
+      },
+      "backToLogin": "→ العودة لتسجيل الدخول"
+    },
+    "verifyEmail": {
+      "loading": {
+        "title": "جاري التحقق من بريدك الإلكتروني",
+        "description": "يرجى الانتظار بينما نتحقق من عنوان بريدك الإلكتروني..."
+      },
+      "success": {
+        "title": "تم التحقق من البريد الإلكتروني!",
+        "description": "تم التحقق من بريدك الإلكتروني بنجاح",
+        "redirecting": "سيتم التوجيه إلى صفحة تسجيل الدخول خلال {countdown} ثانية...",
+        "continueButton": "الاستمرار لتسجيل الدخول"
+      },
+      "error": {
+        "title": "فشل التحقق",
+        "description": "لم نتمكن من التحقق من عنوان بريدك الإلكتروني",
+        "noToken": "لم يتم توفير رمز التحقق",
+        "expiredOrInvalid": "قد يكون رابط التحقق منتهي الصلاحية أو غير صالح",
+        "createNewAccount": "إنشاء حساب جديد",
+        "backToLogin": "العودة لتسجيل الدخول"
+      },
+      "messages": {
+        "verificationFailed": "فشل التحقق",
+        "emailVerifiedSuccess": "تم التحقق من البريد الإلكتروني بنجاح!"
+      },
+      "invalidToken": "رمز التحقق غير صالح أو منتهي الصلاحية",
+      "success_r": "تم التحقق من البريد الإلكتروني بنجاح!"
+    },
+    "resendVerification": {
+      "emailRequired": "البريد الإلكتروني مطلوب",
+      "checkEmail": "إذا كان البريد موجوداً، سيتم إرسال رابط التحقق",
+      "alreadyVerified": "البريد الإلكتروني مُحقق منه بالفعل",
+      "rateLimited": "يرجى الانتظار قبل طلب بريد آخر",
+      "success": "تم إرسال بريد التحقق بنجاح!"
+    },
+    "forgotPassword": {
+      "checkEmail": "إذا كان البريد موجوداً، سيتم إرسال رابط إعادة التعيين",
+      "success": "تم إرسال بريد إعادة تعيين كلمة المرور!"
+    },
+    "resetPassword": {
+      "invalidToken": "رمز إعادة التعيين غير صالح أو منتهي",
+      "success": "تم إعادة تعيين كلمة المرور بنجاح!"
+    },
+    "verifyOTP": {
+      "invalidRequest": "طلب غير صالح",
+      "expired": "انتهت صلاحية رمز OTP",
+      "invalid": "رمز OTP غير صحيح",
+      "success": "تم التحقق من الهاتف بنجاح!"
+    },
+    "resendOTP": {
+      "invalidRequest": "طلب غير صالح",
+      "alreadyVerified": "الهاتف مُحقق منه بالفعل",
+      "success": "تم إرسال رمز OTP بنجاح"
+    },
+    "errors": {
+      "general": "حدث خطأ ما"
+    }
+  },
+  "errors": {
+    "nameMin": "الاسم يجب أن يكون على الأقل حرفين",
+    "invalidEmail": "بريد إلكتروني غير صالح",
+    "phoneDigits": "رقم الهاتف يجب أن يكون 11 رقمًا",
+    "passwordMin": "كلمة المرور يجب ألا تقل عن 8 أحرف",
+    "passwordsDontMatch": "كلمتا المرور غير متطابقتين",
+    "requiredByMethod": "يجب إدخال البريد أو الهاتف حسب طريقة التسجيل",
+    "identifierRequired": "يُرجى إدخال البريد أو الهاتف",
+    "passwordRequired": "يُرجى إدخال كلمة المرور",
+    "labelRequired": "اسم العنوان مطلوب",
+    "fullNameRequired": "الاسم الكامل مطلوب",
+    "streetRequired": "العنوان التفصيلي مطلوب",
+    "cityRequired": "اسم المدينة مطلوب",
+    "stateRequired": "اسم المحافظة مطلوب",
+    "postalRequired": "الرمز البريدي مطلوب",
+    "countryRequired": "اسم الدولة مطلوب",
+    "atLeastOneAddress": "يجب إدخال عنوان واحد على الأقل"
   }
 }

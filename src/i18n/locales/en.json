@@ -5,7 +5,12 @@
     "categories": "Categories",
     "about": "About",
     "contact": "Contact",
-    "novaShop": "Nova Shop"
+    "novaShop": "Nova Shop",
+    "profile": "Profile",
+    "orders": "Orders",
+    "settings": "Settings",
+    "logout": "Logout",
+    "login": "Login"
   },
   "hero": {
     "title": "Welcome to Nova Shop",
@@ -227,5 +232,172 @@
     "supportDesc": "Our support team is always ready to assist you",
     "stillNeedHelp": "Still need help?",
     "contactSupport": "Contact our support team"
+  },
+  "auth": {
+    "signUp": {
+      "title": "Create a New Account",
+      "description": "Enter your details to create an account",
+      "withEmail": "With Email",
+      "withPhone": "With Phone",
+      "submit": "Create Account",
+      "orContinueWith": "Or continue with",
+      "continueWithGoogle": "Continue with Google",
+      "alreadyHaveAccount": "Already have an account?",
+      "signInLink": "Sign In",
+      "name": {
+        "label": "Full Name",
+        "description": "The name that will appear on your account.",
+        "placeholder": "Enter your name"
+      },
+      "email": {
+        "label": "Email Address",
+        "description": "We will send a verification code to this email.",
+        "placeholder": "example@domain.com"
+      },
+      "phone": {
+        "label": "Phone Number",
+        "description": "We will send a verification code to this number.",
+        "placeholder": "011 1111 1111"
+      },
+      "password": {
+        "label": "Password",
+        "description": "Must be at least 8 characters long.",
+        "placeholder": "Enter password"
+      },
+      "confirmPassword": {
+        "label": "Confirm Password",
+        "description": "Re-enter your password to match.",
+        "placeholder": "Re-enter password"
+      },
+      "emailVerifiedTitle": "Email Verified Successfully!",
+      "emailVerifiedMessage": "You can now sign in to your account.",
+      "passwordResetSuccess": "Password reset successful! Please sign in with your new password.",
+      "passwordChangedMessage": "Your password has been changed. Please sign in again for security."
+    },
+    "login": {
+      "title": "Sign In",
+      "description": "Enter your details to access your account",
+      "emailOrPhone": "Email or Phone",
+      "emailOrPhonePlaceholder": "Enter email or phone number",
+      "password": "Password",
+      "forgotPassword": "Forgot Password?",
+      "submit": "Sign In",
+      "orContinueWith": "Or continue with",
+      "continueWithGoogle": "Continue with Google",
+      "dontHaveAccount": "Don't have an account?",
+      "signUpLink": "Create Account",
+      "emailOrPhoneDescription": "Enter the email address or phone number associated with your account.",
+      "passwordDescription": "Enter your account password to continue.",
+      "passwordPlaceholder": "Enter your password",
+      "missingCredentials": "Please enter email/phone and password",
+      "invalidCredentials": "Invalid credentials",
+      "notVerified": "Please verify your account first",
+      "accountDeactivated": "Your account has been deactivated"
+    },
+    "messages": {
+      "invalidCredentials": "Invalid email, phone, or password.",
+      "loggedIn": "Logged in successfully.",
+      "generalError": "Something went wrong. Please try again."
+    },
+    "verifyRequest": {
+      "title": "Check Your Email",
+      "description": "We've sent a verification link to ",
+      "instructions": {
+        "heading": "To complete your registration:",
+        "step1": "Check your email inbox.",
+        "step2": "Click the verification link in the email.",
+        "step3": "Return here to sign in."
+      },
+      "expirationInfo": "The verification link will expire in 24 hours.",
+      "resendPrompt": "Didn't receive the email?",
+      "resendSuccess": "Verification email sent successfully!",
+      "resendErrorDefault": "Failed to resend email. Please try again later.",
+      "button": {
+        "sending": "Sending...",
+        "resend": "Resend Email",
+        "countdown": "Resend in {count}s"
+      },
+      "tips": {
+        "heading": "Tips:",
+        "tip1": "Check your spam/junk folder.",
+        "tip2": "Make sure the email address is correct.",
+        "tip3": "Add our email to your contacts.",
+        "tip4": "Wait a few minutes for the email to arrive."
+      },
+      "backToLogin": "← Back to Log In"
+    },
+    "verifyEmail": {
+      "loading": {
+        "title": "Verifying Your Email",
+        "description": "Please wait while we verify your email address..."
+      },
+      "success": {
+        "title": "Email Verified!",
+        "description": "Your email has been successfully verified",
+        "redirecting": "Redirecting to sign in page in {countdown} seconds...",
+        "continueButton": "Continue to Log In"
+      },
+      "error": {
+        "title": "Verification Failed",
+        "description": "We couldn't verify your email address",
+        "noToken": "No verification token provided",
+        "expiredOrInvalid": "The verification link may have expired or is invalid",
+        "createNewAccount": "Create New Account",
+        "backToLogin": "Back to Log In"
+      },
+      "messages": {
+        "verificationFailed": "Verification failed",
+        "emailVerifiedSuccess": "Email verified successfully!"
+      },
+      "invalidToken": "Invalid or expired verification token",
+      "success_r": "Email verified successfully!"
+    },
+    "resendVerification": {
+      "emailRequired": "Email is required",
+      "checkEmail": "If the email exists, a verification link will be sent",
+      "alreadyVerified": "Email is already verified",
+      "rateLimited": "Please wait before requesting another email",
+      "success": "Verification email sent successfully!"
+    },
+    "forgotPassword": {
+      "checkEmail": "If the email exists, a reset link will be sent",
+      "success": "Password reset email sent!"
+    },
+    "resetPassword": {
+      "invalidToken": "Invalid or expired reset token",
+      "success": "Password reset successfully!"
+    },
+    "verifyOTP": {
+      "invalidRequest": "Invalid request",
+      "expired": "OTP has expired",
+      "invalid": "Invalid OTP",
+      "success": "Phone verified successfully!"
+    },
+    "resendOTP": {
+      "invalidRequest": "Invalid request",
+      "alreadyVerified": "Phone already verified",
+      "success": "OTP sent successfully"
+    },
+    "errors": {
+      "general": "Something went wrong"
+    }
+  },
+  "errors": {
+    "nameMin": "Name must be at least 2 characters",
+    "invalidEmail": "Invalid email address",
+    "phoneDigits": "Phone must be 11 digits",
+    "passwordMin": "Password must be at least 8 characters",
+    "passwordsDontMatch": "Passwords don't match",
+    "requiredByMethod": "Please provide email or phone based on registration method",
+    "identifierRequired": "Email or phone is required",
+    "passwordRequired": "Password is required",
+    "labelRequired": "Label is required",
+    "fullNameRequired": "Full name is required",
+    "streetRequired": "Street address is required",
+    "cityRequired": "City is required",
+    "stateRequired": "State is required",
+    "postalRequired": "Postal code is required",
+    "countryRequired": "Country is required",
+    "atLeastOneAddress": "At least one address is required"
   }
 }

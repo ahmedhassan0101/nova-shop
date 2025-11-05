@@ -18,7 +18,7 @@ export interface IAddress {
 // --- 2. Main User Interface ---
 // Defines the complete user object structure.
 export interface IUser extends Document {
-  // Basic Info (Used by NextAuth)
+  // _id: Types.ObjectId;
   name: string;
   email?: string;
   phone?: string;
@@ -166,12 +166,9 @@ const UserSchema = new Schema<IUser>(
   }
 );
 
-// --- 5. Indexing for Performance ---
-// These indexes help optimize queries on email and phone fields.
-UserSchema.index({ email: 1 });
-UserSchema.index({ phone: 1 });
 
-// --- 6. Model Export ---
+
+// --- 5. Model Export ---
 // Standard Next.js/Mongoose pattern to prevent Model Redefinition errors
 const User: Model<IUser> =
   mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
