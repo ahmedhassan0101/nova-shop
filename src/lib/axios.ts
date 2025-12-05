@@ -44,15 +44,6 @@ axiosInstance.interceptors.response.use(
     // }
     // console.log("Axios Error: ", error);
 
-    console.group("❌ Axios Error Details");
-    console.log("1. Error Object:", error);
-    console.log("2. Error Message:", error.message);
-    console.log("3. Error Response:", error.response);
-    console.log("4. Error Response Data:", error.response?.data);
-    console.log("5. Error Response Status:", error.response?.status);
-    console.log("6. Error Config:", error.config);
-    console.groupEnd();
-
-    return Promise.reject(error);
+    return Promise.reject(error.response?.data);
   }
 );

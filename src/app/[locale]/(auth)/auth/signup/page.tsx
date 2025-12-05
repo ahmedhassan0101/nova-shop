@@ -1,7 +1,7 @@
 // src\app\[locale]\auth\signup\page.tsx
 "use client";
 import { useLocale, useTranslations } from "next-intl";
-import { signUpSchema, type SignUpInput } from "@/lib/validations/auth";
+import { signUpSchema, type SignUpInput } from "@/lib/schemas/auth";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -34,12 +34,13 @@ export default function SignUpPage() {
   const { mutate: signUp, isPending } = useRegister();
   const locale = useLocale();
   const dir = locale === "ar" ? "rtl" : "ltr";
+
   const handleSignUp = async (formData: SignUpInput) => {
     console.log("🚀 ~ handleSignUp ~ formData:", formData);
     signUp(formData);
   };
 
-  const { form, onSubmit } = useFormHandler<typeof signUpSchema>({
+  const { form, onSubmit } = useFormHandler({
     schema: signUpSchema,
     defaultValues: defaultValues,
     onSubmit: handleSignUp,

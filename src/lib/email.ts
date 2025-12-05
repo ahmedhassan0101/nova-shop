@@ -1,18 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // lib/email.ts
 import { Resend } from "resend";
+import { ApiError } from "./apiResponse";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendVerificationEmail(email: string, token: string) {
-  console.log("🚀 ~ sendVerificationEmail ~ token:", token);
-  console.log("🚀 ~ sendVerificationEmail ~ email:", email);
-
   const verificationUrl = `${process.env.NEXTAUTH_URL}/auth/verify-email?token=${token}`;
 
   try {
-    console.log("first");
     await resend.emails.send({
-      from: 'Your Store <onboarding@resend.dev>',
+      from: "Your Store <onboarding@resend.dev>",
       to: email,
       subject: "Verify your email address",
       html: `
@@ -60,20 +58,20 @@ export async function sendVerificationEmail(email: string, token: string) {
         </html>
       `,
     });
-    console.log("second");
-  } catch (error) {
-    console.log("🚀 ~ sendVerificationEmail ~ error:", error);
-    console.error("Error sending verification email:", error);
-    throw new Error("Failed to send verification email");
+  } catch (error: any) {
+    throw new ApiError({
+      message: error?.message || "Failed to send verification email",
+      messageKey: "email.verification.sendFailed",
+      status: 500,
+    });
   }
 }
 
 export async function sendPasswordResetEmail(email: string, token: string) {
   const resetUrl = `${process.env.NEXTAUTH_URL}/auth/reset-password?token=${token}`;
-
   try {
     await resend.emails.send({
-      from: 'Your Store <onboarding@resend.dev>',
+      from: "Your Store <onboarding@resend.dev>",
       to: email,
       subject: "Reset your password",
       html: `
@@ -121,16 +119,19 @@ export async function sendPasswordResetEmail(email: string, token: string) {
         </html>
       `,
     });
-  } catch (error) {
-    console.error("Error sending reset email:", error);
-    throw new Error("Failed to send reset email");
+  } catch (error: any) {
+    throw new ApiError({
+      message: error?.message || "Failed to send password reset email",
+      messageKey: "email.passwordReset.sendFailed",
+      status: 500,
+    });
   }
 }
 
 export async function sendWelcomeEmail(email: string, name: string) {
   try {
     await resend.emails.send({
-      from: 'Your Store <onboarding@resend.dev>',
+      from: "Your Store <onboarding@resend.dev>",
       to: email,
       subject: "Welcome to Our Store! 🎊",
       html: `

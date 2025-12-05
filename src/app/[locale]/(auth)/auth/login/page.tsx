@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { getLogInSchema, LogInInput } from "@/lib/validations/auth";
+import { logInSchema, type LogInInput } from "@/lib/schemas/auth";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -26,7 +26,7 @@ const defaultValues: LogInInput = {
 };
 
 export default function LoginPage() {
-  const t = useTranslations();
+  const t = useTranslations("auth.login");
   const searchParams = useSearchParams();
 
   // query parameters
@@ -35,13 +35,12 @@ export default function LoginPage() {
   const passwordChanged = searchParams.get("password-changed");
 
   const { mutate: login, loginWithGoogle, isPending } = useLogin();
-  const logInSchema = getLogInSchema(t);
 
   const handleLogin = async (formData: LogInInput) => {
     login(formData);
   };
 
-  const { form, onSubmit } = useFormHandler<typeof logInSchema>({
+  const { form, onSubmit } = useFormHandler({
     schema: logInSchema,
     defaultValues: defaultValues,
     onSubmit: handleLogin,
@@ -51,8 +50,8 @@ export default function LoginPage() {
     <div className="container flex items-center justify-center py-10">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl">{t("auth.login.title")}</CardTitle>
-          <CardDescription>{t("auth.login.description")}</CardDescription>
+          <CardTitle className="text-2xl">{t("title")}</CardTitle>
+          <CardDescription>{t("description")}</CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -61,9 +60,9 @@ export default function LoginPage() {
             <Alert className="mb-4 border-green-500/50 bg-green-500/10">
               <CheckCircle2 className="h-4 w-4 text-green-500" />
               <AlertDescription className="ml-2 text-green-700 dark:text-green-400">
-                <strong>{t("auth.login.emailVerifiedTitle")}</strong>
+                <strong>{t("emailVerifiedTitle")}</strong>
                 <br />
-                {t("auth.login.emailVerifiedMessage")}
+                {t("emailVerifiedMessage")}
               </AlertDescription>
             </Alert>
           )}
@@ -72,7 +71,7 @@ export default function LoginPage() {
             <Alert className="mb-4">
               <CheckCircle2 className="h-4 w-4" />
               <AlertDescription className="ml-2">
-                {t("auth.login.passwordResetSuccess")}
+                {t("passwordResetSuccess")}
               </AlertDescription>
             </Alert>
           )}
@@ -81,7 +80,7 @@ export default function LoginPage() {
             <Alert className="mb-4">
               <Info className="h-4 w-4" />
               <AlertDescription className="ml-2">
-                {t("auth.login.passwordChangedMessage")}
+                {t("passwordChangedMessage")}
               </AlertDescription>
             </Alert>
           )}
@@ -92,9 +91,9 @@ export default function LoginPage() {
               <FormInput
                 control={form.control}
                 name="identifier"
-                label={t("auth.login.emailOrPhone")}
-                description={t("auth.login.emailOrPhoneDescription")}
-                placeholder={t("auth.login.emailOrPhonePlaceholder")}
+                label={t("emailOrPhone")}
+                description={t("emailOrPhoneDescription")}
+                placeholder={t("emailOrPhonePlaceholder")}
                 disabled={isPending}
                 className="space-y-2"
               />
@@ -104,9 +103,9 @@ export default function LoginPage() {
                 <FormInput
                   control={form.control}
                   name="password"
-                  label={t("auth.login.password")}
-                  description={t("auth.login.passwordDescription")}
-                  placeholder={t("auth.login.emailOrPhonePlaceholder")}
+                  label={t("password")}
+                  description={t("passwordDescription")}
+                  placeholder={t("emailOrPhonePlaceholder")}
                   disabled={isPending}
                   type="password"
                 />
@@ -115,14 +114,14 @@ export default function LoginPage() {
                     href="/auth/forgot-password"
                     className="text-sm text-primary hover:underline"
                   >
-                    {t("auth.login.forgotPassword")}
+                    {t("forgotPassword")}
                   </Link>
                 </div>
               </div>
 
               <Button type="submit" className="w-full" disabled={isPending}>
                 {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {t("auth.login.submit")}
+                {t("submit")}
               </Button>
             </form>
           </Form>
@@ -134,7 +133,7 @@ export default function LoginPage() {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-background px-2 text-muted-foreground">
-                {t("auth.login.orContinueWith")}
+                {t("orContinueWith")}
               </span>
             </div>
           </div>
@@ -157,14 +156,14 @@ export default function LoginPage() {
                 className="mr-2"
               />
             )}
-            {t("auth.login.continueWithGoogle")}
+            {t("continueWithGoogle")}
           </Button>
 
           {/* Sign Up Link */}
           <p className="mt-4 text-center text-sm text-muted-foreground">
-            {t("auth.login.dontHaveAccount")}{" "}
+            {t("dontHaveAccount")}{" "}
             <Link href="/auth/signup" className="underline hover:text-primary">
-              {t("auth.login.signUpLink")}
+              {t("signUpLink")}
             </Link>
           </p>
         </CardContent>

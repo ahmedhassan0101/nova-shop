@@ -2,10 +2,19 @@
 
 // ============= Base Response =============
 
-interface ApiResponse<T = void> {
+export interface ApiResponse<T = void> {
+  messageKey?: string;
   message: string;
   status: number;
   data?: T;
+}
+
+// ============= Error Type =============
+export interface ApiErrorResponse {
+  message: string;
+  messageKey?: string;
+  status: number;
+  errors?: Record<string, string[]>;
 }
 
 // ============= Auth Response Types =============
@@ -34,11 +43,6 @@ export type VerifyEmailResponse = ApiResponse<{
   email: string;
 }>;
 
-// Reset Password
-export type ResetPasswordResponse = ApiResponse<void>;
-
-// Forgot Password
-export type ForgotPasswordResponse = ApiResponse<void>;
 
 // Verify OTP
 export type VerifyOTPResponse = ApiResponse<{
@@ -50,5 +54,3 @@ export type VerifyOTPResponse = ApiResponse<{
 export type ResendOTPResponse = ApiResponse<{
   phone: string;
 }>;
-// ============= Error Type =============
-export type ApiError = ApiResponse<undefined>;

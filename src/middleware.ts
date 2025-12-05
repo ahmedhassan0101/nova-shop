@@ -49,6 +49,20 @@ export async function middleware(request: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
+  // ✅ NEW: Redirect authenticated users away from auth pages
+  const authPaths = ["/auth/login", "/auth/signup", "/auth/forgot-password"];
+  if (authPaths.some((p) => pathWithoutLocale.startsWith(p)) && token) {
+    // If user is logged in and trying to access auth pages
+    if (!token.isProfileComplete) {
+      // Redirect to profile completion
+      return NextResponse.redirect(
+        new URL(`/${locale}/profile/complete`, request.url)
+      );
+    }
+    // Redirect to home if profile is complete
+    return NextResponse.redirect(new URL(`/${locale}/`, request.url));
+  }
+
   // 5. Authentication Check (Protecting routes requiring login)
   const protectedPaths = ["/profile", "/orders", "/checkout", "/wishlist"];
   // If the path is protected AND the user is NOT logged in (!token)

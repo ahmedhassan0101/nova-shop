@@ -1,12 +1,27 @@
 // app/api/auth/reset-password/route.ts
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import bcrypt from "bcryptjs";
 import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
+import { validateBody } from "@/lib/validation";
+
+import { z } from "zod";
+import { ApiError, errorResponse, successResponse } from "@/lib/apiResponse";
+
+export const resetPasswordSchema = z.object({
+  password: z.string().min(8, { message: "errors.passwordMin" }),
+  token: z
+    .string()
+    .min(1, { message: "auth.resetPassword.tokenRequired" })
+    .regex(/^[a-f0-9]{64}$/i, { message: "auth.resetPassword.tokenInvalid" }),
+});
 
 export async function POST(req: NextRequest) {
   try {
-    const { token, password } = await req.json();
+    const { token, password } = validateBody(
+      await req.json(),
+      resetPasswordSchema
+    );
 
     await connectDB();
 
@@ -16,10 +31,11 @@ export async function POST(req: NextRequest) {
     });
 
     if (!user) {
-      return NextResponse.json(
-        { message: "auth.resetPassword.invalidToken", status: 400 },
-        { status: 400 }
-      );
+      throw new ApiError({
+        message: "The reset token is invalid or has expired.",
+        messageKey: "auth.resetPassword.tokenInvalid",
+        status: 400,
+      });
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -29,15 +45,12 @@ export async function POST(req: NextRequest) {
     user.resetPasswordExpires = undefined;
     await user.save();
 
-    return NextResponse.json({
-      message: "auth.resetPassword.success",
-      status: 200,
+    return successResponse({
+      message: "Password reset successfully!",
+      messageKey: "auth.resetPassword.success",
+      // status: 200, // 200 is a default
     });
   } catch (error) {
-    console.error("Reset password error:", error);
-    return NextResponse.json(
-      { message: "auth.errors.general", status: 500 },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
