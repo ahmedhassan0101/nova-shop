@@ -272,7 +272,12 @@
       "emailVerifiedTitle": "Email Verified Successfully!",
       "emailVerifiedMessage": "You can now sign in to your account.",
       "passwordResetSuccess": "Password reset successful! Please sign in with your new password.",
-      "passwordChangedMessage": "Your password has been changed. Please sign in again for security."
+      "passwordChangedMessage": "Your password has been changed. Please sign in again for security.",
+      "emailExists": "This email address is already registered.",
+      "phoneExists": "This phone number is already registered.",
+      "emailSuccess": "Account created successfully. Please check your email to verify your account.",
+      "phoneSuccess": "Account created successfully. An OTP will be sent to your phone.",
+      "invalidMethod": "Invalid registration method."
     },
     "login": {
       "title": "Sign In",
@@ -292,6 +297,7 @@
       "missingCredentials": "Please enter email/phone and password",
       "invalidCredentials": "Invalid credentials",
       "notVerified": "Please verify your account first",
+       "success": "Logged in successfully!",
       "accountDeactivated": "Your account has been deactivated"
     },
     "messages": {
@@ -361,11 +367,27 @@
     },
     "forgotPassword": {
       "checkEmail": "If the email exists, a reset link will be sent",
-      "success": "Password reset email sent!"
+      "success": "Password reset email sent!",
+      "title": "Forgot Password?",
+      "description": "Enter your email and we'll send you a link to reset your password.",
+      "emailLabel": "Email Address",
+      "emailDescription": "Enter the email associated with your account.",
+      "emailPlaceholder": "you@example.com",
+      "sendResetLink": "Send Reset Link",
+      "checkYourEmailTitle": "Check Your Email",
+      "checkYourEmailDescription": "We've sent password reset instructions to.",
+      "checkEmailAlert": "Click the link in the email to reset your password. The link will expire in 1 hour.",
+      "backToLogin": "Back to Log In",
+      "error": "Something went wrong. Please try again.",
+      "errors": {
+        "invalidEmail": "Please enter a valid email address."
+      }
     },
     "resetPassword": {
       "invalidToken": "Invalid or expired reset token",
-      "success": "Password reset successfully!"
+      "success": "Password reset successfully!",
+      "tokenRequired": "A reset token is required.",
+      "tokenInvalid": "The reset token is invalid or has expired."
     },
     "verifyOTP": {
       "invalidRequest": "Invalid request",
@@ -379,7 +401,7 @@
       "success": "OTP sent successfully"
     },
     "errors": {
-      "general": "Something went wrong"
+      "general": "An unexpected error occurred. Please try again later."
     }
   },
   "errors": {
@@ -398,6 +420,10 @@
     "stateRequired": "State is required",
     "postalRequired": "Postal code is required",
     "countryRequired": "Country is required",
-    "atLeastOneAddress": "At least one address is required"
+    "atLeastOneAddress": "At least one address is required",
+    "userNotFound": "User not found",
+    "invalidIdentifier": "Please enter a valid email or 11-digit phone number",
+    "selectRegisterMethod": "Please select a registration method",
+         "googleSignInFailed": "Failed to sign in with Google. Please try again."
   }
 }

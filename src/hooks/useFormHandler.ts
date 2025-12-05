@@ -46,9 +46,10 @@ export function useFormHandler<T extends z.ZodType<any, any>>({
   };
 }
 
+//usage  
 // const { form, onSubmit } = useFormHandler({
 //     schema: mySchema,
 //     defaultValues: { /* ... */ },
 //     onSubmit: handleSubmitFunction,
-///    (مثل mode, reValidateMode)
+
 // });

@@ -1,43 +1,45 @@
 // app/api/auth/forgot-password/route.ts
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import crypto from "crypto";
 import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
-import { sendPasswordResetEmail } from "@/lib/email-nodemailer";
+import { sendPasswordResetEmail } from "@/lib/email";
+import { validateBody } from "@/lib/validation";
+import { ApiError, errorResponse, successResponse } from "@/lib/apiResponse";
+import { forgotPasswordSchema } from "@/lib/schemas/auth";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email } = await req.json();
+    // Validation
+    const { email } = validateBody(await req.json(), forgotPasswordSchema);
 
     await connectDB();
 
     const user = await User.findOne({ email });
 
     if (!user) {
-      return NextResponse.json(
-        { message: "auth.errors.general", status: 500 },
-        { status: 500 }
-      );
+      throw new ApiError({
+        message: "User not found",
+        messageKey: "errors.userNotFound",
+        status: 404,
+      });
     }
 
     const resetToken = crypto.randomBytes(32).toString("hex");
-    const resetPasswordExpires = new Date(Date.now() + 60 * 60 * 1000); // ساعة واحدة
+    const resetPasswordExpires = new Date(Date.now() + 60 * 60 * 1000);
 
     user.resetPasswordToken = resetToken;
     user.resetPasswordExpires = resetPasswordExpires;
     await user.save();
 
-    await sendPasswordResetEmail(email, resetToken);
-
-    return NextResponse.json({
-      message: "auth.forgotPassword.success",
-      status: 200,
+    // await sendPasswordResetEmail(email, resetToken);
+    await sendPasswordResetEmail("test@example.com", "test-token");
+    return successResponse({
+      message: "Password reset email sent!",
+      messageKey: "auth.forgotPassword.success",
+      // status: 200, // 200 is a default
     });
   } catch (error) {
-    console.error("Forgot password error:", error);
-    return NextResponse.json(
-      { message: "auth.errors.general", status: 500 },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }

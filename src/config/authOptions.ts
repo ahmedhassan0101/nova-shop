@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { logInSchema } from "@/lib/schemas/auth";
 import connectDB from "@/lib/mongodb";
 import User, { IUser } from "@/models/User";
 import { NextAuthOptions } from "next-auth";
@@ -5,6 +7,8 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import GoogleProvider from "next-auth/providers/google";
 import mongoose from "mongoose";
+import { validateBody } from "@/lib/validation";
+import { ApiError } from "@/lib/apiResponse";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -16,61 +20,64 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        // Basic input validation
-        if (!credentials?.identifier || !credentials?.password) {
-          throw new Error("auth.login.missingCredentials");
+        try {
+          // Basic input validation
+          // if (!credentials?.identifier || !credentials?.password) {
+          //   throw new Error("auth.login.missingCredentials");
+          // }
+          const { identifier, password } = validateBody(
+            {
+              identifier: credentials?.identifier,
+              password: credentials?.password,
+            },
+            logInSchema
+          );
+          // Connect to the database
+          await connectDB();
+
+          // Find user by email or phone
+          const user = await User.findOne({
+            $or: [{ email: identifier }, { phone: identifier }],
+          }).lean<IUser & { _id: mongoose.Types.ObjectId }>();
+
+          // User not found or password missing
+          if (!user || !user.password) {
+            throw new Error("auth.login.invalidCredentials");
+          }
+          // Compare passwords
+          const isPasswordValid = await bcrypt.compare(password, user.password);
+
+          if (!isPasswordValid) {
+            throw new Error("auth.login.invalidCredentials");
+          }
+
+          // Ensure user verified and active
+          if (!user.emailVerified && !user.phoneVerified) {
+            throw new Error("auth.login.notVerified");
+          }
+
+          if (!user.isActive) {
+            throw new Error("auth.login.accountDeactivated");
+          }
+          // Update last login time
+          await User.updateOne(
+            { _id: user._id },
+            { $set: { lastLogin: new Date() } }
+          );
+          // await user.save();
+
+          // Return user data for session token
+          return {
+            id: user._id.toString(),
+            email: user.email || undefined,
+            name: user.name,
+            image: user.image || undefined,
+            role: user.role,
+            isProfileComplete: user.isProfileComplete,
+          };
+        } catch (error: any) {
+          throw new Error(error.message || "auth.login.invalidCredentials");
         }
-
-        // Connect to the database
-        await connectDB();
-
-        // Find user by email or phone
-        const user = await User.findOne({
-          $or: [
-            { email: credentials.identifier },
-            { phone: credentials.identifier },
-          ],
-        }).lean<IUser & { _id: mongoose.Types.ObjectId }>();
-
-        // User not found or password missing
-        if (!user || !user.password) {
-          throw new Error("auth.login.invalidCredentials");
-        }
-        // Compare passwords
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
-
-        if (!isPasswordValid) {
-          throw new Error("auth.login.invalidCredentials");
-        }
-
-        // Ensure user verified and active
-        if (!user.emailVerified && !user.phoneVerified) {
-          throw new Error("auth.login.notVerified");
-        }
-        if (!user.isActive) {
-          throw new Error("auth.login.accountDeactivated");
-        }
-
-        // Update last login time
-        // user.lastLogin = new Date();
-        await User.updateOne(
-          { _id: user._id },
-          { $set: { lastLogin: new Date() } }
-        );
-        // await user.save();
-
-        // Return user data for session token
-        return {
-          id: user._id.toString(),
-          email: user.email || undefined,
-          name: user.name,
-          image: user.image || undefined,
-          role: user.role,
-          isProfileComplete: user.isProfileComplete,
-        };
       },
     }),
 
@@ -83,7 +90,6 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     // Runs when a user signs in
     async signIn({ user, account, profile }) {
-      console.log("🚀 ~ signIn ~ profile:", profile);
       if (account?.provider === "google") {
         await connectDB();
         const existingUser = await User.findOne({ email: user.email });

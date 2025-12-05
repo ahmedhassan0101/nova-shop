@@ -1,30 +1,33 @@
 // app/api/auth/resend-otp/route.ts
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import bcrypt from "bcryptjs";
 import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
-import { sendOTP } from "@/lib/sms";
+// import { sendOTP } from "@/lib/sms";
+import { ApiError, errorResponse, successResponse } from "@/lib/apiResponse";
 
 export async function POST(req: NextRequest) {
   try {
     const { userId } = await req.json();
-
+    // validation id
     await connectDB();
 
     const user = await User.findById(userId);
 
     if (!user || !user.phone) {
-      return NextResponse.json(
-        { message: "auth.resendOTP.invalidRequest", status: 400 },
-        { status: 400 }
-      );
+      throw new ApiError({
+        message: "Invalid request",
+        messageKey: "auth.resendOTP.invalidRequest",
+        status: 400,
+      });
     }
 
     if (user.phoneVerified) {
-      return NextResponse.json(
-        { message: "auth.resendOTP.alreadyVerified", status: 400 },
-        { status: 400 }
-      );
+      throw new ApiError({
+        message: "Phone already verified",
+        messageKey: "auth.resendOTP.alreadyVerified",
+        status: 400,
+      });
     }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -34,18 +37,14 @@ export async function POST(req: NextRequest) {
     user.otpExpires = otpExpires;
     await user.save();
 
-    await sendOTP(user.phone, otp);
-
-    return NextResponse.json({
-      message: "auth.resendOTP.success",
+    // await sendOTP(user.phone, otp);
+    return successResponse({
+      message: "OTP sent successfully.",
+      messageKey: "auth.resendOTP.success",
       data: { phone: user.phone },
-      status: 200,
+      // status: 200, // 200 is a default
     });
   } catch (error) {
-    console.error("Resend OTP error:", error);
-    return NextResponse.json(
-      { message: "auth.errors.general", status: 500 },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }

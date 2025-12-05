@@ -1,19 +1,26 @@
 // app/api/auth/resend-verification/route.ts
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import crypto from "crypto";
 import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
 import { sendVerificationEmail } from "@/lib/email";
+import { ApiError, errorResponse, successResponse } from "@/lib/apiResponse";
+import z from "zod";
+import { validateBody } from "@/lib/validation";
+
+const emailSchema = z.object({
+  email: z.email("errors.invalidEmail"),
+});
 
 export async function POST(req: NextRequest) {
   try {
-    const { email } = await req.json();
-
+    const { email } = validateBody(await req.json(), emailSchema);
     if (!email) {
-      return NextResponse.json(
-        { message: "auth.resendVerification.emailRequired", status: 400 },
-        { status: 400 }
-      );
+      throw new ApiError({
+        message: "Email is required",
+        messageKey: "auth.resendVerification.emailRequired",
+        status: 400,
+      });
     }
 
     await connectDB();
@@ -21,18 +28,20 @@ export async function POST(req: NextRequest) {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return NextResponse.json({
-        message: "auth.resendVerification.checkEmail",
-        status: 200,
+      return successResponse({
+        message: "If the email exists, a verification link will be sent",
+        messageKey: "auth.resendVerification.checkEmail",
+        // status: 200, // 200 is a default
       });
     }
 
     // Check if already verified
     if (user.emailVerified) {
-      return NextResponse.json(
-        { message: "auth.resendVerification.alreadyVerified", status: 400 },
-        { status: 400 }
-      );
+      throw new ApiError({
+        message: "Email is already verified",
+        messageKey: "auth.resendVerification.alreadyVerified",
+        status: 400,
+      });
     }
 
     // Check if recently sent (rate limiting)
@@ -42,10 +51,12 @@ export async function POST(req: NextRequest) {
         (user.verificationTokenExpires.getTime() - 24 * 60 * 60 * 1000);
       if (timeSinceLastSent < 60000) {
         // 1 minute
-        return NextResponse.json(
-          { message: "auth.resendVerification.rateLimited", status: 429 },
-          { status: 429 }
-        );
+
+        throw new ApiError({
+          message: "Please wait before requesting another email",
+          messageKey: "auth.resendVerification.rateLimited",
+          status: 429,
+        });
       }
     }
 
@@ -60,19 +71,12 @@ export async function POST(req: NextRequest) {
     // Send email
     await sendVerificationEmail(email, verificationToken);
 
-    return NextResponse.json(
-      {
-        message: "auth.resendVerification.success",
-        data: { email },
-        status: 200,
-      },
-      { status: 200 }
-    );
+    return successResponse({
+      message: "Verification email sent successfully!",
+      messageKey: "auth.resendVerification.success",
+      // status: 200, // 200 is a default
+    });
   } catch (error) {
-    console.error("Resend verification error:", error);
-    return NextResponse.json(
-      { message: "auth.errors.general", status: 500 },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }

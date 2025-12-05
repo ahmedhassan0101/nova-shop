@@ -1,35 +1,44 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // src\app\api\auth\register\route.ts
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
 import { sendVerificationEmail } from "@/lib/email";
+import { validateBody } from "@/lib/validation";
+import { signUpSchema } from "@/lib/schemas/auth";
+import { ApiError, errorResponse, successResponse } from "@/lib/apiResponse";
+
 // import { sendOTP } from '@/lib/sms';
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, email, phone, password, registerWith } = await req.json();
+    // const { name, email, phone, password, registerWith } = await req.json();
+    const { name, email, phone, password, registerWith } = validateBody(
+      await req.json(),
+      signUpSchema
+    );
     await connectDB();
 
     if (email) {
       const existingUser = await User.findOne({ email });
       if (existingUser) {
-        return NextResponse.json(
-          { message: "auth.register.emailExists", status: 409 },
-          { status: 409 }
-        );
+        throw new ApiError({
+          message: "This email address is already registered.",
+          messageKey: "auth.signUp.emailExists",
+          status: 409,
+        });
       }
     }
 
     if (phone) {
       const existingUser = await User.findOne({ phone });
       if (existingUser) {
-        return NextResponse.json(
-          { message: "auth.register.phoneExists", status: 409 },
-          { status: 409 }
-        );
+        throw new ApiError({
+          message: "This phone number is already registered.",
+          messageKey: "auth.signUp.phoneExists",
+          status: 409,
+        });
       }
     }
 
@@ -54,14 +63,12 @@ export async function POST(req: NextRequest) {
     if (registerWith === "email" && email) {
       await sendVerificationEmail(email, verificationToken);
 
-      return NextResponse.json(
-        {
-          message: "auth.register.emailSuccess",
-          data: userResponse,
-          status: 201,
-        },
-        { status: 201 }
-      );
+      return successResponse({
+        message:
+          "Account created successfully. Please check your email to verify your account.",
+        messageKey: "auth.signUp.emailSuccess",
+        status: 201,
+      });
     } else if (registerWith === "phone" && phone) {
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
       const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
@@ -69,28 +76,20 @@ export async function POST(req: NextRequest) {
       user.otpExpires = otpExpires;
       await user.save();
       // await sendOTP(phone, otp);
-      return NextResponse.json(
-        {
-          message: "auth.register.phoneSuccess",
-          data: { ...userResponse, requiresOTP: true },
-          status: 201,
-        },
-        { status: 201 }
-      );
+      return successResponse({
+        message:
+          "Account created successfully. An OTP will be sent to your phone.",
+        messageKey: "auth.signUp.phoneSuccess",
+        status: 201,
+      });
     }
 
-    return NextResponse.json(
-      { message: "auth.register.invalidMethod", status: 400 },
-      { status: 400 }
-    );
-  } catch (error: any) {
-    console.error("Registration error:", error);
-    return NextResponse.json(
-      {
-        message: error.message || "auth.errors.general",
-        status: 500,
-      },
-      { status: 500 }
-    );
+    throw new ApiError({
+      message: "Invalid registration method.",
+      messageKey: "auth.signUp.invalidMethod",
+      status: 404,
+    });
+  } catch (error) {
+    return errorResponse(error);
   }
 }

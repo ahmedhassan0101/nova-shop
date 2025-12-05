@@ -1,14 +1,17 @@
-'use client';
+"use client";
 
-import { useForm, useFieldArray } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { profileCompletionStep2Schema, ProfileStep2Input } from '@/lib/validations/auth';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Plus, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { useForm, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  profileCompletionStep2Schema,
+  ProfileStep2Input,
+} from "@/lib/schemas/auth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
 
 interface AddressStepProps {
   onComplete: () => void;
@@ -27,14 +30,14 @@ export default function AddressStep({ onComplete }: AddressStepProps) {
     defaultValues: {
       addresses: [
         {
-          label: 'Home',
-          fullName: '',
-          phone: '',
-          street: '',
-          city: '',
-          state: '',
-          postalCode: '',
-          country: 'Egypt',
+          label: "Home",
+          fullName: "",
+          phone: "",
+          street: "",
+          city: "",
+          state: "",
+          postalCode: "",
+          country: "Egypt",
           isDefault: true,
         },
       ],
@@ -43,20 +46,20 @@ export default function AddressStep({ onComplete }: AddressStepProps) {
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'addresses',
+    name: "addresses",
   });
 
   const onSubmit = async (data: ProfileStep2Input) => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/user/complete-profile', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/user/complete-profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ step: 2, data }),
       });
 
-      if (!response.ok) throw new Error('Failed to update profile');
+      if (!response.ok) throw new Error("Failed to update profile");
 
       onComplete();
     } catch (error) {
@@ -155,14 +158,14 @@ export default function AddressStep({ onComplete }: AddressStepProps) {
         variant="outline"
         onClick={() =>
           append({
-            label: '',
-            fullName: '',
-            phone: '',
-            street: '',
-            city: '',
-            state: '',
-            postalCode: '',
-            country: 'Egypt',
+            label: "",
+            fullName: "",
+            phone: "",
+            street: "",
+            city: "",
+            state: "",
+            postalCode: "",
+            country: "Egypt",
             isDefault: false,
           })
         }

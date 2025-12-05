@@ -1,6 +1,12 @@
 import { axiosInstance } from "@/lib/axios";
-import { LogInInput, SignUpInput } from "@/lib/validations/auth";
-import { RegisterResponse, VerifyEmailResponse } from "@/types/api";
+import { LogInInput, SignUpInput } from "@/lib/schemas/auth";
+import {
+  ApiErrorResponse,
+  ApiResponse,
+  RegisterResponse,
+  VerifyEmailResponse,
+} from "@/types/api";
+import { useDisplayToast } from "@/utils/displayToast";
 import { useMutation } from "@tanstack/react-query";
 import { getSession, signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
@@ -11,51 +17,51 @@ export function useLogin() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
-  const t = useTranslations("auth");
+  const t = useTranslations();
 
   const loginWithCredentials = useMutation({
     mutationFn: async ({ identifier, password }: LogInInput) => {
-      return signIn("credentials", {
+      const result = await signIn("credentials", {
         redirect: false,
         identifier,
         password,
         callbackUrl,
       });
-    },
-    onSuccess: async (response) => {
-      console.log("🚀 ~ useLogin ~ response:", response);
-      if (!response || response.error) {
-        toast.error(response?.error || t("messages.invalidCredentials"));
-        return;
+      if (!result?.ok && result?.error) {
+        throw new Error(result.error);
       }
-      toast.success(t("messages.loggedIn"));
+      return result;
+    },
+    onSuccess: async () => {
+      toast.success(t("auth.login.success"));
 
       const session = await getSession();
-      console.log("🚀 ~ useLogin ~ session:", session);
 
       if (session?.user && !session.user.isProfileComplete) {
-        router.push("/profile/complete");
+        router.replace("/profile/complete");
       } else {
-        router.push(callbackUrl);
+        router.replace(callbackUrl);
       }
       router.refresh();
     },
     onError: (error) => {
-      console.log("🚀 ~ useLogin ~ error:", error);
-      console.error("Auth error:", error);
-      toast.error(t("messages.generalError"));
+      toast.error(t(error.message));
     },
   });
   const loginWithGoogle = async () => {
-    // await signIn("google", { callbackUrl });
-    await signIn("google", { callbackUrl: "/profile/complete" });
+    try {
+      await signIn("google", { callbackUrl: "/profile/complete" });
+    } catch (error) {
+      console.error("Google sign-in error:", error);
+      toast.error(t("auth.errors.googleSignInFailed"));
+    }
   };
   return { ...loginWithCredentials, loginWithGoogle };
 }
 
 export function useRegister() {
   const router = useRouter();
-
+  const { displayError, displaySuccess } = useDisplayToast();
   return useMutation({
     mutationFn: async (formData: SignUpInput) => {
       const response = await axiosInstance.post<RegisterResponse>(
@@ -64,85 +70,108 @@ export function useRegister() {
       );
       return response.data;
     },
-    onSuccess: (response) => {
-      if (response) {
-        toast.success(response.message);
-      }
-      // if (response?.requiresOTP) {
-      //   router.push(`/auth/verify-otp?userId=${response.data.userId}`);
+    onSuccess: (data, variables) => {
+      displaySuccess(data);
+
+      // if (data?.requiresOTP) {
+      //   router.push(`/auth/verify-otp?userId=${data.data.userId}`);
       // } else {
-      router.push(`/auth/verify-request?email=${response.data?.email}`);
+      router.push(`/auth/verify-request?email=${variables?.email}`);
       // }
     },
-    onError: (error) => {
-      console.log("🚀 ~ useRegister ~ error:", error);
-      console.group("❌ Hook Error Details");
-      console.log("1. Full Error:", error);
-      console.log("2. Error Message:", error.message);
-      console.log("3. Error Response:", error.response);
-      console.log("4. Error Response Data:", error.response?.data);
-      console.log("5. Error Response Status:", error.response?.status);
-      console.groupEnd();
-      toast.error(error.message);
+    onError: (error: ApiErrorResponse) => {
+      displayError(error);
     },
   });
 }
 
-interface ResendInput {
-  email: string;
-}
-
 export function useResendVerification() {
-  const t = useTranslations("auth");
-  console.log("32"); // print twice every second
-
+  const { displayError, displaySuccess } = useDisplayToast();
   return useMutation({
-    mutationFn: async ({ email }: ResendInput) => {
+    mutationFn: async ({ email }: { email: string }) => {
       const response = await axiosInstance.post("/auth/resend-verification", {
         email,
       });
       return response.data;
     },
-    onSuccess: (response) => {
-      console.log("✅ Resend verification success:", response);
-      if (response.message) {
-        toast.success(response.message);
-      }
+    onSuccess: (data) => {
+      displaySuccess(data);
     },
-    onError: (error) => {
-      console.error("❌ Resend verification error:", error);
-      toast.error(error.message || t("verifyRequest.resendErrorDefault"));
+    onError: (error: ApiErrorResponse) => {
+      displayError(error);
     },
   });
 }
 
-interface VerifyEmailInput {
-  token: string;
-}
-
 export function useVerifyEmail() {
-  const t = useTranslations("auth.verifyEmail.messages");
-
+  const { displayError, displaySuccess } = useDisplayToast();
   return useMutation({
     mutationKey: ["verifyEmail"],
-    mutationFn: async ({ token }: VerifyEmailInput) => {
+    mutationFn: async ({ token }: { token: string }) => {
       const response = await axiosInstance.post<VerifyEmailResponse>(
         "/auth/verify-email",
+        { token }
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      displaySuccess(data);
+    },
+    onError: (error: ApiErrorResponse) => {
+      displayError(error);
+    },
+    retry: false,
+  });
+}
+
+export function useForgotPassword() {
+  const { displayError, displaySuccess } = useDisplayToast();
+  return useMutation({
+    mutationFn: async ({ email }: { email: string }) => {
+      const response = await axiosInstance.post<ApiResponse>(
+        "/auth/forgot-password",
+        { email }
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      displaySuccess(data);
+    },
+
+    onError: (error: ApiErrorResponse) => {
+      displayError(error);
+    },
+  });
+}
+
+export function useResetPassword() {
+  const router = useRouter();
+  const { displayError, displaySuccess } = useDisplayToast();
+  return useMutation({
+    mutationFn: async ({
+      password,
+      token,
+    }: {
+      password: string;
+      token: string;
+    }) => {
+      const response = await axiosInstance.post<ApiResponse>(
+        "/auth/reset-password",
         {
+          password,
           token,
         }
       );
       return response.data;
     },
-    onSuccess: (response) => {
-      console.log("✅ Email verification success:", response);
-      toast.success(response.message || t("emailVerifiedSuccess"));
+    onSuccess: (data) => {
+      displaySuccess(data);
+      setTimeout(() => {
+        router.push("/auth/login?password-reset=true");
+      }, 2000);
     },
-    onError: (error) => {
-      console.log("🚀 ~ useVerifyEmail ~ error:", error);
-      console.error("❌ Email verification error:", error.message);
-      toast.error(error.message || t("verificationFailed"));
+    onError: (error: ApiErrorResponse) => {
+      displayError(error);
     },
-    retry: false,
   });
 }
