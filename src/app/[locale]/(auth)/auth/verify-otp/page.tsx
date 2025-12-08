@@ -1,138 +1,83 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // app/[locale]/auth/verify-otp/page.tsx
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2 } from 'lucide-react';
+import { useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Loader2, Shield } from "lucide-react";
+import { useResendOTP, useVerifyOTP } from "@/hooks/useAuth";
+import { type OTPFormValues, otpSchema } from "@/lib/schemas/auth";
+import { useCountdownTimer } from "@/hooks/useCountdownTimer";
 
 export default function VerifyOTPPage() {
-  const t = useTranslations('auth');
+  const t = useTranslations("auth.verifyOTP");
   const router = useRouter();
   const searchParams = useSearchParams();
-  const userId = searchParams.get('userId');
+  const userId = searchParams.get("userId");
 
-  const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [canResend, setCanResend] = useState(false);
-  const [countdown, setCountdown] = useState(60);
+  // const [canResend, setCanResend] = useState(false);
+  // const [countdown, setCountdown] = useState(60);
+  const { countdown, canResend, resetTimer } = useCountdownTimer(60);
+  const verifyMutation = useVerifyOTP();
+  const resendMutation = useResendOTP();
 
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-
-  // useEffect(() => {
-  //   if (!userId) {
-  //     router.push('/auth/signup');
-  //   }
-  // }, [userId, router]);
+  const form = useForm<OTPFormValues>({
+    resolver: zodResolver(otpSchema),
+    defaultValues: {
+      otp: "",
+    },
+  });
 
   useEffect(() => {
-    if (countdown > 0) {
-      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-      return () => clearTimeout(timer);
-    } else {
-      setCanResend(true);
+    if (!userId) {
+      router.push("/auth/signup");
     }
-  }, [countdown]);
-
-  const handleChange = (index: number, value: string) => {
-    if (isNaN(Number(value))) return;
-
-    const newOtp = [...otp];
-    newOtp[index] = value;
-    setOtp(newOtp);
-
-    // الانتقال للحقل التالي تلقائياً
-    if (value && index < 5) {
-      inputRefs.current[index + 1]?.focus();
+  }, [userId, router]);
+  useEffect(() => {
+    if (resendMutation.isSuccess) {
+      resetTimer();
+      form.reset();
     }
+  }, [resendMutation.isSuccess, resetTimer, form]);
+  // React Hook useEffect has a missing dependency: 'form'. Either include it or remove the dependency array.eslintreact-hooks/exhaustive-deps   const resetTimer: () => void;
+  const onSubmit = (data: OTPFormValues) => {
+    if (!userId) return;
+    verifyMutation.mutate({ userId, otp: data.otp });
   };
 
-  const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
-    if (e.key === 'Backspace' && !otp[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus();
-    }
-  };
+  const handleResend = () => {
+    console.log("🚀 ~ handleResend ~ handleResend:", handleResend);
+    console.log("🚀 ~ handleResend ~ canResend:", canResend);
+    console.log("🚀 ~ handleResend ~ userId:", userId);
+    if (!canResend || !userId) return;
+    console.log("🚀 ~ handleResend ~ canResend:", canResend);
+    console.log("🚀 ~ handleResend ~ userId:", userId);
 
-  const handlePaste = (e: React.ClipboardEvent) => {
-    e.preventDefault();
-    const pastedData = e.clipboardData.getData('text').slice(0, 6);
-    const newOtp = pastedData.split('');
-    
-    while (newOtp.length < 6) {
-      newOtp.push('');
-    }
-    
-    setOtp(newOtp);
-    inputRefs.current[5]?.focus();
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError('');
-
-    const otpCode = otp.join('');
-
-    if (otpCode.length !== 6) {
-      setError('Please enter the complete OTP');
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      const response = await fetch('/api/auth/verify-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, otp: otpCode }),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Verification failed');
-      }
-
-      // تسجيل دخول تلقائي بعد التحقق
-      router.push('/auth/login?verified=true');
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleResend = async () => {
-    if (!canResend) return;
-
-    setIsLoading(true);
-    setError('');
-
-    try {
-      const response = await fetch('/api/auth/resend-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to resend OTP');
-      }
-
-      setCanResend(false);
-      setCountdown(60);
-      setOtp(['', '', '', '', '', '']);
-      inputRefs.current[0]?.focus();
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
+    resendMutation.mutate({ userId });
   };
 
   return (
@@ -140,75 +85,89 @@ export default function VerifyOTPPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
-            <svg
-              className="h-10 w-10 text-primary"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-              />
-            </svg>
+            <Shield className="h-10 w-10 text-primary" />
           </div>
-          <CardTitle className="text-2xl">Verify Your Phone</CardTitle>
-          <CardDescription>
-            Enter the 6-digit code we sent to your phone number
-          </CardDescription>
+          <CardTitle className="text-2xl">{t("title")}</CardTitle>
+          <CardDescription>{t("description")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* OTP Input Fields */}
-            <div className="flex gap-2 justify-center" onPaste={handlePaste}>
-              {otp.map((digit, index) => (
-                <Input
-                  key={index}
-                  ref={(el) => (inputRefs.current[index] = el)}
-                  type="text"
-                  inputMode="numeric"
-                  maxLength={1}
-                  value={digit}
-                  onChange={(e) => handleChange(index, e.target.value)}
-                  onKeyDown={(e) => handleKeyDown(index, e)}
-                  className="w-12 h-12 text-center text-lg font-semibold"
-                  disabled={isLoading}
-                  autoFocus={index === 0}
-                />
-              ))}
-            </div>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="otp"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col items-center">
+                    <FormLabel className="text-center">
+                      {t("otpLabel")}
+                    </FormLabel>
+                    <FormControl>
+                      <InputOTP
+                        maxLength={6}
+                        {...field}
+                        disabled={verifyMutation.isPending}
+                      >
+                        <InputOTPGroup dir={"ltr"}>
+                          <InputOTPSlot index={0} />
+                          <InputOTPSlot index={1} />
+                          <InputOTPSlot index={2} />
+                          <InputOTPSlot index={3} />
+                          <InputOTPSlot index={4} />
+                          <InputOTPSlot index={5} />
+                        </InputOTPGroup>
+                      </InputOTP>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            {error && (
-              <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Verify Phone
-            </Button>
-
-            {/* Resend OTP */}
-            <div className="text-center text-sm">
-              {canResend ? (
-                <button
-                  type="button"
-                  onClick={handleResend}
-                  disabled={isLoading}
-                  className="text-primary hover:underline font-medium"
-                >
-                  Resend OTP
-                </button>
-              ) : (
-                <span className="text-muted-foreground">
-                  Resend OTP in {countdown}s
-                </span>
+              {verifyMutation.isError && (
+                <Alert variant="destructive">
+                  <AlertDescription>
+                    {verifyMutation.error?.message || t("verifyError")}
+                  </AlertDescription>
+                </Alert>
               )}
-            </div>
-          </form>
+
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={
+                  verifyMutation.isPending || form.watch("otp").length !== 6
+                }
+              >
+                {verifyMutation.isPending && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                {t("verifyButton")}
+              </Button>
+
+              <div className="text-center text-sm">
+                {canResend ? (
+                  <Button
+                    type="button"
+                    onClick={handleResend}
+                    disabled={resendMutation.isPending}
+                    // className="text-primary hover:underline font-medium disabled:opacity-50"
+                  >
+                    {resendMutation.isPending ? (
+                      <span className="flex items-center justify-center">
+                        <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                        {t("sending")}
+                      </span>
+                    ) : (
+                      t("resendButton")
+                    )}
+                  </Button>
+                ) : (
+                  <span className="text-muted-foreground">
+                    {t("resendCountdown")} : {countdown} {t("seconds")}
+                  </span>
+                )}
+              </div>
+            </form>
+          </Form>
         </CardContent>
       </Card>
     </div>

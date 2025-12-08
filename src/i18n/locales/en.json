@@ -277,12 +277,16 @@
       "phoneExists": "This phone number is already registered.",
       "emailSuccess": "Account created successfully. Please check your email to verify your account.",
       "phoneSuccess": "Account created successfully. An OTP will be sent to your phone.",
-      "invalidMethod": "Invalid registration method."
+      "invalidMethod": "Invalid registration method.",
+      "smsError": "Failed to send verification code. Please try again.",
+      "rateLimitExceeded": "Too many registration attempts. Please try again later."
     },
     "login": {
       "title": "Sign In",
       "description": "Enter your details to access your account",
       "emailOrPhone": "Email or Phone",
+      "emailVerifiedTitle": "Email Verified Successfully!",
+      "emailVerifiedMessage": "You can now sign in to your account.",
       "emailOrPhonePlaceholder": "Enter email or phone number",
       "password": "Password",
       "forgotPassword": "Forgot Password?",
@@ -297,7 +301,7 @@
       "missingCredentials": "Please enter email/phone and password",
       "invalidCredentials": "Invalid credentials",
       "notVerified": "Please verify your account first",
-       "success": "Logged in successfully!",
+      "success": "Logged in successfully!",
       "accountDeactivated": "Your account has been deactivated"
     },
     "messages": {
@@ -390,15 +394,29 @@
       "tokenInvalid": "The reset token is invalid or has expired."
     },
     "verifyOTP": {
-      "invalidRequest": "Invalid request",
-      "expired": "OTP has expired",
-      "invalid": "Invalid OTP",
-      "success": "Phone verified successfully!"
+      "title": "Verify Your Phone",
+      "description": "Enter the 6-digit code we sent to your phone number",
+      "otpLabel": "Verification Code",
+      "verifyButton": "Verify Phone",
+      "verifyError": "Failed to verify code. Please try again.",
+      "resendButton": "Resend OTP",
+      "resendCountdown": "Resend OTP in",
+      "seconds": "s",
+      "sending": "Sending...",
+      "userNotFound": "User not found",
+      "noOTPFound": "No OTP request found. Please request a new OTP.",
+      "expired": "OTP has expired. Please request a new one.",
+      "invalid": "Invalid OTP. Please check and try again.",
+      "success": "Phone verified successfully!",
+      "invalidRequest": "Invalid request"
     },
     "resendOTP": {
       "invalidRequest": "Invalid request",
-      "alreadyVerified": "Phone already verified",
-      "success": "OTP sent successfully"
+      "userNotFound": "User not found",
+      "noPhone": "No phone number associated with this account",
+      "alreadyVerified": "Phone number is already verified",
+      "tooSoon": "Please wait before requesting a new OTP",
+      "success": "OTP sent successfully to your phone"
     },
     "errors": {
       "general": "An unexpected error occurred. Please try again later."
@@ -424,6 +442,6 @@
     "userNotFound": "User not found",
     "invalidIdentifier": "Please enter a valid email or 11-digit phone number",
     "selectRegisterMethod": "Please select a registration method",
-         "googleSignInFailed": "Failed to sign in with Google. Please try again."
+    "googleSignInFailed": "Failed to sign in with Google. Please try again."
   }
 }
