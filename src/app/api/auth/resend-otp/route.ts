@@ -3,30 +3,51 @@ import { NextRequest } from "next/server";
 import bcrypt from "bcryptjs";
 import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
-// import { sendOTP } from "@/lib/sms";
+import { sendOTP } from "@/lib/sms";
 import { ApiError, errorResponse, successResponse } from "@/lib/apiResponse";
+import { validateBody } from "@/lib/validation";
+import { resendOTPSchema } from "@/lib/schemas/auth";
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = await req.json();
-    // validation id
+    const { userId } = validateBody(await req.json(), resendOTPSchema);
+
     await connectDB();
 
     const user = await User.findById(userId);
 
-    if (!user || !user.phone) {
+    if (!user) {
       throw new ApiError({
-        message: "Invalid request",
-        messageKey: "auth.resendOTP.invalidRequest",
+        message: "User not found",
+        messageKey: "auth.resendOTP.userNotFound",
+        status: 404,
+      });
+    }
+
+    if (!user.phone) {
+      throw new ApiError({
+        message: "No phone number associated with this account",
+        messageKey: "auth.resendOTP.noPhone",
         status: 400,
       });
     }
 
     if (user.phoneVerified) {
       throw new ApiError({
-        message: "Phone already verified",
+        message: "Phone number is already verified",
         messageKey: "auth.resendOTP.alreadyVerified",
         status: 400,
+      });
+    }
+
+    if (
+      user.otpExpires &&
+      user.otpExpires > new Date(Date.now() + 9 * 60 * 1000)
+    ) {
+      throw new ApiError({
+        message: "Please wait before requesting a new OTP",
+        messageKey: "auth.resendOTP.tooSoon",
+        status: 429,
       });
     }
 
@@ -37,11 +58,15 @@ export async function POST(req: NextRequest) {
     user.otpExpires = otpExpires;
     await user.save();
 
-    // await sendOTP(user.phone, otp);
+    await sendOTP(user.phone, otp);
+
     return successResponse({
-      message: "OTP sent successfully.",
+      message: "OTP sent successfully to your phone",
       messageKey: "auth.resendOTP.success",
-      data: { phone: user.phone },
+      data: {
+        phone: user.phone,
+        expiresIn: 600, // seconds
+      },
       // status: 200, // 200 is a default
     });
   } catch (error) {

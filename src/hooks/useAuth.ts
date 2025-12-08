@@ -1,13 +1,16 @@
 import { axiosInstance } from "@/lib/axios";
+import { getLatestOTP } from "@/lib/otp-actions";
 import { LogInInput, SignUpInput } from "@/lib/schemas/auth";
 import {
   ApiErrorResponse,
   ApiResponse,
   RegisterResponse,
+  ResendOTPResponse,
   VerifyEmailResponse,
+  VerifyOTPResponse,
 } from "@/types/api";
 import { useDisplayToast } from "@/utils/displayToast";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { getSession, signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -73,11 +76,11 @@ export function useRegister() {
     onSuccess: (data, variables) => {
       displaySuccess(data);
 
-      // if (data?.requiresOTP) {
-      //   router.push(`/auth/verify-otp?userId=${data.data.userId}`);
-      // } else {
-      router.push(`/auth/verify-request?email=${variables?.email}`);
-      // }
+      if (variables.registerWith === "phone" && data?.data?.requiresOTP) {
+        router.push(`/auth/verify-otp?userId=${data.data._id}`);
+      } else if (variables.registerWith === "email" && variables.email) {
+        router.push(`/auth/verify-request?email=${variables.email}`);
+      }
     },
     onError: (error: ApiErrorResponse) => {
       displayError(error);
@@ -173,5 +176,60 @@ export function useResetPassword() {
     onError: (error: ApiErrorResponse) => {
       displayError(error);
     },
+  });
+}
+
+export function useVerifyOTP() {
+  const router = useRouter();
+  const { displayError, displaySuccess } = useDisplayToast();
+
+  return useMutation({
+    mutationFn: async (data: { userId: string; otp: string }) => {
+      const response = await axiosInstance.post<VerifyOTPResponse>(
+        "/auth/verify-otp",
+        data
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      displaySuccess(data);
+      router.push("/auth/login?verified=true");
+    },
+    onError: (error: ApiErrorResponse) => {
+      displayError(error);
+    },
+  });
+}
+
+export function useResendOTP() {
+  const { displayError, displaySuccess } = useDisplayToast();
+
+  return useMutation({
+    mutationFn: async (data: { userId: string }) => {
+      const response = await axiosInstance.post<ResendOTPResponse>(
+        "/auth/resend-otp",
+        data
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      displaySuccess(data);
+    },
+    onError: (error: ApiErrorResponse) => {
+      displayError(error);
+    },
+  });
+}
+
+export function useLatestOTP() {
+  return useQuery({
+    queryKey: ["latestOTP"],
+    queryFn: async () => {
+      const data = await getLatestOTP();
+
+      return data;
+    },
+    refetchInterval: 5000,
+    staleTime: 0,
   });
 }

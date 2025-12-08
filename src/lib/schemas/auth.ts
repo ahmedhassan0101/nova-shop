@@ -12,7 +12,6 @@ export const signUpSchema = z
     password: z.string().min(8, "errors.passwordMin"),
     confirmPassword: z.string().min(8, "errors.passwordMin"),
     registerWith: z.enum(["email", "phone"], "errors.selectRegisterMethod"),
-  
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "errors.passwordsDontMatch",
@@ -97,6 +96,27 @@ export const profileCompletionStep3Schema = z.object({
   newsletter: z.boolean().default(false),
 });
 
+export const otpSchema = z.object({
+  otp: z
+    .string()
+    .length(6, "OTP must be exactly 6 digits")
+    .regex(/^\d+$/, "OTP must contain only numbers"),
+});
+export const resendOTPSchema = z.object({
+  userId: z.string().min(1, "User ID is required"),
+});
+
+export const verifyOTPSchema = resendOTPSchema.extend(otpSchema.shape);
+
+// export const verifyOTPSchema = z.object({
+//   userId: z.string().min(1, "User ID is required"),
+//   otp: z
+//     .string()
+//     .length(6, "OTP must be exactly 6 digits")
+//     .regex(/^\d+$/, "OTP must contain only numbers"),
+// });
+
+
 // export const profileCompletionStep3Schema = z.object({
 //   dateOfBirth: z.string().optional().or(z.literal('')),
 //   gender: z.enum(['male', 'female']).optional(),
@@ -117,3 +137,6 @@ export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 export type AddressInput = z.infer<typeof addressSchema>;
 export type ProfileStep2Input = z.infer<typeof profileCompletionStep2Schema>;
 export type ProfileStep3Input = z.infer<typeof profileCompletionStep3Schema>;
+export type OTPFormValues = z.infer<typeof otpSchema>;
+export type VerifyOTPInput = z.infer<typeof verifyOTPSchema>;
+export type ResendOTPInput = z.infer<typeof resendOTPSchema>;

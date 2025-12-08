@@ -4,26 +4,41 @@ import bcrypt from "bcryptjs";
 import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
 import { ApiError, errorResponse, successResponse } from "@/lib/apiResponse";
+import { validateBody } from "@/lib/validation";
+import { verifyOTPSchema } from "@/lib/schemas/auth";
+import { otpStore } from "@/lib/otp-store";
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId, otp } = await req.json();
-    // validation id and otp
+    const { userId, otp } = validateBody(await req.json(), verifyOTPSchema);
+
     await connectDB();
 
     const user = await User.findById(userId);
 
-    if (!user || !user.otp || !user.otpExpires) {
+    if (!user) {
       throw new ApiError({
-        message: "Invalid request",
-        messageKey: "auth.verifyOTP.invalidRequest",
+        message: "User not found",
+        messageKey: "auth.verifyOTP.userNotFound",
+        status: 404,
+      });
+    }
+
+    if (!user.otp || !user.otpExpires) {
+      throw new ApiError({
+        message: "No OTP request found. Please request a new OTP.",
+        messageKey: "auth.verifyOTP.noOTPFound",
         status: 400,
       });
     }
 
     if (user.otpExpires < new Date()) {
+      user.otp = undefined;
+      user.otpExpires = undefined;
+      await user.save();
+
       throw new ApiError({
-        message: "OTP has expired",
+        message: "OTP has expired. Please request a new one.",
         messageKey: "auth.verifyOTP.expired",
         status: 400,
       });
@@ -33,7 +48,7 @@ export async function POST(req: NextRequest) {
 
     if (!isValid) {
       throw new ApiError({
-        message: "Invalid OTP",
+        message: "Invalid OTP. Please check and try again.",
         messageKey: "auth.verifyOTP.invalid",
         status: 400,
       });
@@ -42,13 +57,19 @@ export async function POST(req: NextRequest) {
     user.phoneVerified = true;
     user.otp = undefined;
     user.otpExpires = undefined;
-    user.profileCompletionStep = 1;
+    user.profileCompletionStep = Math.max(user.profileCompletionStep, 1);
     await user.save();
 
+    otpStore.clear();
+    
     return successResponse({
       message: "Phone verified successfully!",
       messageKey: "auth.verifyOTP.success",
-      data: { userId: user._id, phone: user.phone },
+      data: {
+        userId: user._id,
+        phone: user.phone,
+        phoneVerified: true,
+      },
       // status: 200, // 200 is a default
     });
   } catch (error) {
