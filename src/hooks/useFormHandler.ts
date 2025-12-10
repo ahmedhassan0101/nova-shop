@@ -34,7 +34,7 @@ export function useFormHandler<T extends z.ZodType<any, any>>({
   const form = useForm<FormValues>({
     resolver: zodResolver(schema) as any,
     defaultValues: defaultValues,
-    mode: restOptions.mode || "onBlur",
+    mode: restOptions.mode || "onSubmit",
     ...restOptions,
   });
 
@@ -46,7 +46,7 @@ export function useFormHandler<T extends z.ZodType<any, any>>({
   };
 }
 
-//usage  
+//usage
 // const { form, onSubmit } = useFormHandler({
 //     schema: mySchema,
 //     defaultValues: { /* ... */ },

@@ -7,19 +7,12 @@ import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import {
@@ -27,8 +20,7 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, Shield } from "lucide-react";
+import { Loader2, RefreshCcw, Shield } from "lucide-react";
 import { useResendOTP, useVerifyOTP } from "@/hooks/useAuth";
 import { type OTPFormValues, otpSchema } from "@/lib/schemas/auth";
 import { useCountdownTimer } from "@/hooks/useCountdownTimer";
@@ -39,8 +31,6 @@ export default function VerifyOTPPage() {
   const searchParams = useSearchParams();
   const userId = searchParams.get("userId");
 
-  // const [canResend, setCanResend] = useState(false);
-  // const [countdown, setCountdown] = useState(60);
   const { countdown, canResend, resetTimer } = useCountdownTimer(60);
   const verifyMutation = useVerifyOTP();
   const resendMutation = useResendOTP();
@@ -63,113 +53,106 @@ export default function VerifyOTPPage() {
       form.reset();
     }
   }, [resendMutation.isSuccess, resetTimer, form]);
-  // React Hook useEffect has a missing dependency: 'form'. Either include it or remove the dependency array.eslintreact-hooks/exhaustive-deps   const resetTimer: () => void;
   const onSubmit = (data: OTPFormValues) => {
     if (!userId) return;
     verifyMutation.mutate({ userId, otp: data.otp });
   };
 
   const handleResend = () => {
-    console.log("🚀 ~ handleResend ~ handleResend:", handleResend);
-    console.log("🚀 ~ handleResend ~ canResend:", canResend);
-    console.log("🚀 ~ handleResend ~ userId:", userId);
     if (!canResend || !userId) return;
-    console.log("🚀 ~ handleResend ~ canResend:", canResend);
-    console.log("🚀 ~ handleResend ~ userId:", userId);
 
     resendMutation.mutate({ userId });
   };
 
   return (
-    <div className="container flex items-center justify-center min-h-screen py-10 mx-auto">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
-            <Shield className="h-10 w-10 text-primary" />
-          </div>
-          <CardTitle className="text-2xl">{t("title")}</CardTitle>
-          <CardDescription>{t("description")}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="otp"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col items-center">
-                    <FormLabel className="text-center">
-                      {t("otpLabel")}
-                    </FormLabel>
-                    <FormControl>
-                      <InputOTP
-                        maxLength={6}
-                        {...field}
-                        disabled={verifyMutation.isPending}
-                      >
-                        <InputOTPGroup dir={"ltr"}>
-                          <InputOTPSlot index={0} />
-                          <InputOTPSlot index={1} />
-                          <InputOTPSlot index={2} />
-                          <InputOTPSlot index={3} />
-                          <InputOTPSlot index={4} />
-                          <InputOTPSlot index={5} />
-                        </InputOTPGroup>
-                      </InputOTP>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+    <div className="w-full space-y-8 relative animate-in slide-in-from-bottom-6 duration-1000">
+      <Shield className="absolute -top-10 ltr:-right-10 rtl:-left-10 text-primary/5 h-72 w-72 pointer-events-none" />
 
-              {verifyMutation.isError && (
-                <Alert variant="destructive">
-                  <AlertDescription>
-                    {verifyMutation.error?.message || t("verifyError")}
-                  </AlertDescription>
-                </Alert>
-              )}
+      <div className="text-center space-y-3">
+        <div className="mx-auto w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center border-2 border-primary/20 shadow-xl">
+          <Shield className="h-10 w-10 text-primary" />
+        </div>
+        <h1 className="text-3xl font-black text-slate-900 dark:text-white">
+          {t("title")}
+        </h1>
+        <p className="text-slate-500 font-medium">{t("description")}</p>
+      </div>
 
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={
-                  verifyMutation.isPending || form.watch("otp").length !== 6
-                }
-              >
-                {verifyMutation.isPending && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                {t("verifyButton")}
-              </Button>
-
-              <div className="text-center text-sm">
-                {canResend ? (
-                  <Button
-                    type="button"
-                    onClick={handleResend}
-                    disabled={resendMutation.isPending}
-                    // className="text-primary hover:underline font-medium disabled:opacity-50"
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="otp"
+            render={({ field }) => (
+              <FormItem className="flex flex-col items-center">
+                <FormControl>
+                  <InputOTP
+                    maxLength={6}
+                    {...field}
+                    disabled={verifyMutation.isPending}
                   >
-                    {resendMutation.isPending ? (
-                      <span className="flex items-center justify-center">
-                        <Loader2 className="mr-2 h-3 w-3 animate-spin" />
-                        {t("sending")}
-                      </span>
-                    ) : (
-                      t("resendButton")
-                    )}
-                  </Button>
-                ) : (
-                  <span className="text-muted-foreground">
-                    {t("resendCountdown")} : {countdown} {t("seconds")}
-                  </span>
-                )}
+                    <InputOTPGroup className="gap-3">
+                      {[...Array(6)].map((_, i) => (
+                        <InputOTPSlot
+                          key={i}
+                          index={i}
+                          className="w-12 h-14 sm:w-14 sm:h-16 text-2xl font-black rounded-xl border-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-primary shadow-inner transition-all"
+                        />
+                      ))}
+                    </InputOTPGroup>
+                  </InputOTP>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {!canResend && (
+            <div className="w-full space-y-2">
+              <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-primary transition-all duration-1000"
+                  // style={{ width: `${(countdown / 60) * 100}%` }}
+                  style={{ width: `${((60 - countdown) / 60) * 100}%` }}
+                />
               </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+              <p className="text-[10px] text-center font-bold uppercase tracking-widest text-slate-400">
+                {t("resendCountdown")} : {countdown}s
+              </p>
+            </div>
+          )}
+
+          <Button
+            type="submit"
+            className="w-full h-14 bg-secondary hover:bg-secondary/90 text-white font-black text-lg rounded-2xl shadow-xl shadow-secondary/20"
+            disabled={
+              verifyMutation.isPending || form.watch("otp").length !== 6
+            }
+          >
+            {verifyMutation.isPending ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              t("verifyButton")
+            )}
+          </Button>
+
+          <div className="flex justify-center">
+            {canResend ? (
+              <Button
+                variant="ghost"
+                onClick={handleResend}
+                className="text-primary font-black hover:bg-primary/10 gap-2"
+              >
+                <RefreshCcw className="h-4 w-4" /> {t("resendButton")}
+              </Button>
+            ) : (
+              <div className="opacity-50 pointer-events-none text-slate-400 text-sm font-bold">
+                {t("resendButton")}
+              </div>
+            )}
+          </div>
+        </form>
+      </Form>
     </div>
   );
 }
