@@ -5,11 +5,10 @@ import Footer from "./Footer";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-background font-sans">
       <Navbar />
-      <div className="flex flex-1">
-        <main className="flex-1">{children}</main>
-      </div>
+      {/* <div className=" flex-1">{children}</div> */}
+      <main className="flex-1">{children}</main>
       <Footer />
     </div>
   );

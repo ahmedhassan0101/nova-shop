@@ -129,10 +129,10 @@ export default function TestFormComponent() {
 
             <FormTextarea
               control={form.control}
-              name="bio"
-              label="نبذة عنك"
-              description="اكتب معلومات عن نفسك"
-              placeholder="اكتب نبذة مختصرة عنك..."
+              name=""
+              label=""
+              description=""
+              placeholder=""
               rows={4}
             />
 
@@ -219,3 +219,37 @@ export default function TestFormComponent() {
     </div>
   );
 }
+
+
+
+import { Form } from "../ui/form";
+import { useFormHandler } from "@/hooks/useFormHandler";
+const { form, onSubmit } = useFormHandler({
+  schema: testSchema,
+  defaultValues: defaultValues,
+  onSubmit: (data: TestFormValues) => {
+    console.log("✅ Form Submitted Successfully!");
+    console.log("📋 Form Data:", data);
+  },
+});
+<Form {...form}>
+  <form onSubmit={onSubmit} className="space-y-6"></form>
+
+  <FormInput
+    control={form.control}
+    name=""
+    label={}
+    placeholder={}
+    type="email"
+    disabled={}
+  />
+
+  <FormTextarea
+    control={form.control}
+    name=""
+    label=""
+    description=""
+    placeholder=""
+    rows={4}
+  />
+</Form>;

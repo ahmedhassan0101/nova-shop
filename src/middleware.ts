@@ -66,13 +66,13 @@ export async function middleware(request: NextRequest) {
   // 5. Authentication Check (Protecting routes requiring login)
   const protectedPaths = ["/profile", "/orders", "/checkout", "/wishlist"];
   // If the path is protected AND the user is NOT logged in (!token)
-  if (protectedPaths.some((p) => pathWithoutLocale.startsWith(p)) && !token) {
-    // Redirect to the login page
-    const url = new URL(`/${locale}/auth/login`, request.url);
-    // Add the current path as a callback URL for redirection after successful login
-    url.searchParams.set("callbackUrl", pathname);
-    return NextResponse.redirect(url);
-  }
+  // if (protectedPaths.some((p) => pathWithoutLocale.startsWith(p)) && !token) {
+  //   // Redirect to the login page
+  //   const url = new URL(`/${locale}/auth/login`, request.url);
+  //   // Add the current path as a callback URL for redirection after successful login
+  //   url.searchParams.set("callbackUrl", pathname);
+  //   return NextResponse.redirect(url);
+  // }
 
   // 6. Authorization Check (Admin Access)
   // If the path starts with "/admin" AND the user is logged in but their role is NOT "admin"
@@ -86,17 +86,17 @@ export async function middleware(request: NextRequest) {
   // 7. Profile Completion Check
   // If the user is logged in (token exists) AND their profile is incomplete (!token.isProfileComplete)
   // AND they are NOT currently on the profile completion page AND NOT on auth pages
-  if (
-    token &&
-    !token.isProfileComplete &&
-    !pathWithoutLocale.startsWith("/profile/complete") &&
-    !pathWithoutLocale.startsWith("/auth")
-  ) {
-    // Redirect the user to the mandatory profile completion page
-    return NextResponse.redirect(
-      new URL(`/${locale}/profile/complete`, request.url)
-    );
-  }
+  // if (
+  //   token &&
+  //   !token.isProfileComplete &&
+  //   !pathWithoutLocale.startsWith("/profile/complete") &&
+  //   !pathWithoutLocale.startsWith("/auth")
+  // ) {
+  //   // Redirect the user to the mandatory profile completion page
+  //   return NextResponse.redirect(
+  //     new URL(`/${locale}/profile/complete`, request.url)
+  //   );
+  // }
 
   // 8. Continue Execution
   // If no security or redirect checks were triggered, return the response prepared by the i18n middleware

@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CheckCircle2, Info, Loader2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, Info, Loader2, LogIn, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useFormHandler } from "@/hooks/useFormHandler";
 import { Form } from "@/components/ui/form";
@@ -46,128 +46,113 @@ export default function LoginPage() {
     onSubmit: handleLogin,
   });
 
+  
   return (
-    <div className="container flex items-center justify-center py-10">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl">{t("title")}</CardTitle>
-          <CardDescription>{t("description")}</CardDescription>
-        </CardHeader>
+    <div className="w-full space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 relative">
+      
+      {/* ✨ Watermark Background */}
+      <div className="absolute -top-10 ltr:-right-10 rtl:-left-10  text-primary/5 pointer-events-none select-none">
+        <Sparkles className="h-64 w-64 rotate-12" />
+      </div>
 
-        <CardContent>
-          {/* Success Messages */}
-          {verified === "true" && (
-            <Alert className="mb-4 border-green-500/50 bg-green-500/10">
-              <CheckCircle2 className="h-4 w-4 text-green-500" />
-              <AlertDescription className="ml-2 text-green-700 dark:text-green-400">
-                <strong>{t("emailVerifiedTitle")}</strong>
-                <br />
-                {t("emailVerifiedMessage")}
-              </AlertDescription>
-            </Alert>
-          )}
+      {/* 📝 Heading Section */}
+      <div className="space-y-2 text-center lg:text-left rtl:lg:text-right">
+        <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-2 justify-center lg:justify-start">
+          <LogIn className="text-primary h-8 w-8" />
+          {t("title")}
+        </h1>
+        <p className="text-slate-500 dark:text-slate-400 font-medium">
+          {t("description")}
+        </p>
+      </div>
 
-          {passwordReset === "true" && (
-            <Alert className="mb-4">
-              <CheckCircle2 className="h-4 w-4" />
-              <AlertDescription className="ml-2">
-                {t("passwordResetSuccess")}
-              </AlertDescription>
-            </Alert>
-          )}
+      <div className="space-y-4">
+        {/* ✅ Glassmorphism Success Alerts */}
+        {(verified === "true" || passwordReset === "true") && (
+          <Alert className="border-green-500/20 bg-green-500/10 backdrop-blur-md rounded-2xl p-4">
+            <CheckCircle2 className="h-5 w-5 text-green-500" />
+            <AlertDescription className="ml-2 font-bold text-green-700 dark:text-green-400">
+              {verified === "true" ? t("emailVerifiedMessage") : t("passwordResetSuccess")}
+            </AlertDescription>
+          </Alert>
+        )}
 
-          {passwordChanged === "true" && (
-            <Alert className="mb-4">
-              <Info className="h-4 w-4" />
-              <AlertDescription className="ml-2">
-                {t("passwordChangedMessage")}
-              </AlertDescription>
-            </Alert>
-          )}
+        {passwordChanged === "true" && (
+          <Alert className="border-blue-500/20 bg-blue-500/10 backdrop-blur-md rounded-2xl p-4">
+            <Info className="h-5 w-5 text-primary" />
+            <AlertDescription className="ml-2 font-bold text-blue-700 dark:text-blue-300">
+              {t("passwordChangedMessage")}
+            </AlertDescription>
+          </Alert>
+        )}
 
-          <Form {...form}>
-            <form onSubmit={onSubmit} className="space-y-4">
-              {/* Email or Phone */}
+        <Form {...form}>
+          <form onSubmit={onSubmit} className="space-y-6">
+            <FormInput
+              control={form.control}
+              name="identifier"
+              label={t("emailOrPhone")}
+              placeholder={t("emailOrPhonePlaceholder")}
+              disabled={isPending}
+            />
+
+            <div className="space-y-2">
               <FormInput
                 control={form.control}
-                name="identifier"
-                label={t("emailOrPhone")}
-                description={t("emailOrPhoneDescription")}
-                placeholder={t("emailOrPhonePlaceholder")}
+                name="password"
+                type="password"
+                label={t("password")}
+                placeholder="••••••••"
                 disabled={isPending}
-                className="space-y-2"
               />
-
-              {/* Password */}
-              <div className="space-y-2">
-                <FormInput
-                  control={form.control}
-                  name="password"
-                  label={t("password")}
-                  description={t("passwordDescription")}
-                  placeholder={t("emailOrPhonePlaceholder")}
-                  disabled={isPending}
-                  type="password"
-                />
-                <div className="flex justify-end">
-                  <Link
-                    href="/auth/forgot-password"
-                    className="text-sm text-primary hover:underline"
-                  >
-                    {t("forgotPassword")}
-                  </Link>
-                </div>
+              <div className="flex justify-end">
+                <Link
+                  href="/auth/forgot-password"
+                  className="text-xs font-bold text-primary underline-offset-4 hover:underline"
+                >
+                  {t("forgotPassword")}
+                </Link>
               </div>
-
-              <Button type="submit" className="w-full" disabled={isPending}>
-                {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {t("submit")}
-              </Button>
-            </form>
-          </Form>
-
-          {/* Divider */}
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
             </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">
-                {t("orContinueWith")}
-              </span>
-            </div>
-          </div>
 
-          {/* Google Sign In */}
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={loginWithGoogle}
-            disabled={isPending}
-          >
-            {isPending ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Image
-                src="/google.svg"
-                alt="Google"
-                width={16}
-                height={16}
-                className="mr-2"
-              />
-            )}
-            {t("continueWithGoogle")}
-          </Button>
+            {/* 🚀 Login Button - BLUE (Primary) */}
+            <Button 
+              type="submit" 
+              className="w-full h-12 bg-primary hover:bg-primary/90 text-white font-black text-lg rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-95" 
+              disabled={isPending}
+            >
+              {isPending ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <ArrowRight className="h-5 w-5 mr-2" />}
+              {t("submit")}
+            </Button>
+          </form>
+        </Form>
+      </div>
 
-          {/* Sign Up Link */}
-          <p className="mt-4 text-center text-sm text-muted-foreground">
-            {t("dontHaveAccount")}{" "}
-            <Link href="/auth/signup" className="underline hover:text-primary">
-              {t("signUpLink")}
-            </Link>
-          </p>
-        </CardContent>
-      </Card>
+      {/* 🔗 Divider & Google Auth */}
+      <div className="relative py-4">
+        <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-slate-200 dark:border-slate-800" /></div>
+        <div className="relative flex justify-center text-[10px] uppercase"><span className="bg-background px-4 text-slate-500 font-bold tracking-widest">{t("orContinueWith")}</span></div>
+      </div>
+
+      <Button
+        variant="outline"
+        className="w-full h-12 border-2 rounded-xl font-black gap-3 transition-all hover:bg-slate-50 dark:hover:bg-slate-900"
+        onClick={loginWithGoogle}
+        disabled={isPending}
+      >
+        <Image src="/google.svg" alt="Google" width={20} height={20} />
+        {t("continueWithGoogle")}
+      </Button>
+
+      <p className="text-center text-sm font-medium text-slate-500">
+        {t("dontHaveAccount")}{" "}
+        <Link href="/auth/signup" className="text-primary font-black underline-offset-4 hover:underline">
+          {t("signUpLink")}
+        </Link>
+      </p>
     </div>
   );
+
+
 }
+
