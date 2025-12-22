@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     await user.save();
 
     // await sendPasswordResetEmail(email, resetToken);
-    await sendPasswordResetEmail("test@example.com", "test-token");
+    await sendPasswordResetEmail(email, resetToken);
     return successResponse({
       message: "Password reset email sent!",
       messageKey: "auth.forgotPassword.success",

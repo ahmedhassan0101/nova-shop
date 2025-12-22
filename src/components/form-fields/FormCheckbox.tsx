@@ -17,6 +17,8 @@ interface FormCheckboxProps<T extends FieldValues> {
   label?: string;
   description?: string;
   disabled?: boolean;
+  onChange?: (checked: boolean) => void;
+  className?: string;
 }
 
 export function FormCheckbox<T extends FieldValues>({
@@ -25,17 +27,24 @@ export function FormCheckbox<T extends FieldValues>({
   label,
   description,
   disabled,
+  onChange,
+  className,
 }: FormCheckboxProps<T>) {
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+        <FormItem
+          className={`flex flex-row items-center   ${className} `}
+        >
           <FormControl>
             <Checkbox
               checked={field.value}
-              onCheckedChange={field.onChange}
+              onCheckedChange={(checked) => {
+                field.onChange(checked);
+                onChange?.(checked as boolean);
+              }}
               disabled={disabled}
             />
           </FormControl>

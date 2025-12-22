@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verify Your Email Address</title>
+  </head>
+  <body style="margin: 0; padding: 0; background-color: #f3f4f6; font-family: Arial, sans-serif;">
+    <center style="width: 100%; table-layout: fixed;">
+      <table align="center" style="border-collapse: collapse; max-width: 600px; margin: 40px auto; width: 100%; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+        <tr>
+          <td align="center" style="padding: 25px 30px; background-color: {{PRIMARY_COLOR}}; border-radius: 12px 12px 0 0;">
+            <h1 style="color: #ffffff; font-size: 28px; font-weight: bold; margin: 0;">{{STORE_NAME}}</h1>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 30px;">
+            <h2 style="font-size: 22px; color: #1f2937; margin-top: 0;">Welcome to {{STORE_NAME}}! 🎉</h2>
+            <p style="font-size: 16px; color: #4b5563; line-height: 1.6;">
+              Thank you for signing up. Please verify your email address by clicking the button below to fully activate your account:
+            </p>
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+              <tr>
+                <td align="center" style="padding: 30px 0;">
+                  <a href="{{VERIFICATION_URL}}" 
+                     style="background-color: {{PRIMARY_COLOR}}; color: #ffffff; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold; font-size: 16px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                    Verify Email Address
+                  </a>
+                </td>
+              </tr>
+            </table>
+            <p style="font-size: 14px; color: #6b7280; line-height: 1.6;">
+              If the button doesn't work, please copy and paste this link into your browser:
+              <br>
+              <a href="{{VERIFICATION_URL}}" style="color: {{PRIMARY_COLOR}}; word-break: break-all; text-decoration: none;">{{VERIFICATION_URL}}</a>
+            </p>
+            <p style="font-size: 14px; color: #ef4444; margin-top: 20px; padding: 10px; background-color: {{ACCENT_BG}}; border-radius: 6px;">
+              ⚠️ This link is valid for 24 hours only.
+            </p>
+            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
+            <p style="font-size: 12px; color: #9ca3af; text-align: center;">
+              If you did not create this account, please safely ignore this email.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td align="center" style="padding: 20px 30px; background-color: #f9fafb; border-radius: 0 0 12px 12px;">
+            <p style="font-size: 12px; color: #9ca3af; margin: 0;">
+              © {{CURRENT_YEAR}} {{STORE_NAME}}. All Rights Reserved.
+            </p>
+          </td>
+        </tr>
+      </table>
+    </center>
+  </body>
+</html>

@@ -363,6 +363,7 @@
       "invalidCredentials": "Invalid credentials",
       "notVerified": "Please verify your account first",
       "success": "Logged in successfully!",
+      "passwordChangedMessage": "Your password has been successfully updated. Please sign in using your new password.",
       "accountDeactivated": "Your account has been deactivated"
     },
     "messages": {
@@ -495,6 +496,76 @@
       "general": "An unexpected error occurred. Please try again later."
     }
   },
+  "profile": {
+    "address": "Address",
+    "default": "Default",
+    "label": "Label",
+    "labelPlaceholder": "Example: Home, Work",
+    "fullName": "Full Name",
+    "fullNamePlaceholder": "Enter full name",
+    "phone": "Phone Number",
+    "phonePlaceholder": "01XXXXXXXXX",
+    "country": "Country",
+    "countryPlaceholder": "Select Country",
+    "street": "Street",
+    "streetPlaceholder": "Building number and street name",
+    "city": "City",
+    "cityPlaceholder": "Enter City",
+    "state": "State/Province",
+    "statePlaceholder": "Enter State/Province",
+    "postalCode": "Postal Code",
+    "postalCodePlaceholder": "XXXXX",
+    "setAsDefault": "Set as default address",
+    "addAddress": "Add another address",
+    "continue": "Continue",
+    "saving": "Saving...",
+    "personalInfo": {
+      "title": "Personal Information",
+      "description": "Help us personalize your experience"
+    },
+    "dateOfBirth": {
+      "label": "Date of Birth",
+      "description": "This helps us provide age-appropriate offers",
+      "placeholder": "Select your birth date"
+    },
+    "gender": {
+      "label": "Gender",
+      "description": "Optional - helps us improve our recommendations",
+      "male": "Male",
+      "female": "Female",
+      "other": "Other"
+    },
+    "language": {
+      "title": "Language Preference",
+      "description": "Choose your preferred language",
+      "label": "Website Language",
+      "placeholder": "Select language",
+      "note": "You can change the language anytime from your profile settings"
+    },
+    "notifications": {
+      "title": "Email Notifications",
+      "description": "Stay updated with our latest offers"
+    },
+    "newsletter": {
+      "label": "Newsletter Subscription",
+      "description": "Get exclusive deals, new arrivals, and special offers delivered to your inbox"
+    },
+    "alert": {
+      "title": "Almost done!",
+      "description": "You can update these settings anytime from your profile."
+    },
+    "buttons": {
+      "back": "Back",
+      "saving": "Saving...",
+      "complete": "Complete Setup"
+    },
+    "privacy": {
+      "text": "By completing your profile, you agree to our",
+      "privacyPolicy": "Privacy Policy",
+      "and": "and",
+      "terms": "Terms of Service"
+    }
+  },
   "errors": {
     "nameMin": "Name must be at least 2 characters",
     "required": "This field is required.",
@@ -514,13 +585,15 @@
     "fullNameRequired": "Full name is required",
     "streetRequired": "Street address is required",
     "cityRequired": "City is required",
-    "stateRequired": "State is required",
-    "postalRequired": "Postal code is required",
-    "countryRequired": "Country is required",
-    "atLeastOneAddress": "At least one address is required",
     "userNotFound": "User not found",
     "invalidIdentifier": "Please enter a valid email or 11-digit phone number",
     "selectRegisterMethod": "Please select a registration method",
-    "googleSignInFailed": "Failed to sign in with Google. Please try again."
+    "googleSignInFailed": "Failed to sign in with Google. Please try again.",
+    "phoneInvalid": "Invalid phone number",
+    "stateRequired": "State/Province is required",
+    "postalRequired": "Postal Code is required",
+    "countryRequired": "Country is required",
+    "atLeastOneAddress": "At least one address must be added",
+    "exactlyOneDefault": "Exactly one default address must be set"
   }
 }

@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useLocale } from "next-intl";
 
 // FormSelect Component
 interface SelectOption {
@@ -42,12 +43,13 @@ export function FormSelect<T extends FieldValues>({
   placeholder = "Choose",
   disabled,
 }: FormSelectProps<T>) {
+  const locale = useLocale();
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem>
+        <FormItem dir="">
           {label && <FormLabel>{label}</FormLabel>}
           <Select
             onValueChange={field.onChange}
@@ -55,11 +57,11 @@ export function FormSelect<T extends FieldValues>({
             disabled={disabled}
           >
             <FormControl>
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder={placeholder} />
               </SelectTrigger>
             </FormControl>
-            <SelectContent>
+            <SelectContent dir={locale === "ar" ? "rtl" : "ltr"}>
               {options.map((option) => (
                 <SelectItem key={option.value} value={option.value}>
                   {option.label}

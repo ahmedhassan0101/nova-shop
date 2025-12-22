@@ -121,10 +121,7 @@
 // }
 "use client";
 
-import {
-  forgotPasswordSchema,
-  type ForgotPasswordInput,
-} from "@/lib/schemas/auth";
+import { forgotPasswordSchema } from "@/lib/schemas/auth";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Loader2, Mail, ArrowLeft, Sparkles, CheckCircle2 } from "lucide-react";

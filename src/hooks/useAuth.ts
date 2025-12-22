@@ -1,5 +1,5 @@
 import { axiosInstance } from "@/lib/axios";
-import { getLatestOTP } from "@/lib/otp-actions";
+import { getLatestOTP } from "@/lib/actions/otp-actions";
 import { LogInInput, SignUpInput } from "@/lib/schemas/auth";
 import {
   ApiErrorResponse,
@@ -51,6 +51,7 @@ export function useLogin() {
       toast.error(t(error.message));
     },
   });
+
   const loginWithGoogle = async () => {
     try {
       await signIn("google", { callbackUrl: "/profile/complete" });

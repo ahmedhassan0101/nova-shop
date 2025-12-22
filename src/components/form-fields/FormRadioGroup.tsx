@@ -23,6 +23,7 @@ interface FormRadioGroupProps<T extends FieldValues> {
   description?: string;
   options: RadioOption[];
   disabled?: boolean;
+  className?: string;
 }
 
 export function FormRadioGroup<T extends FieldValues>({
@@ -32,26 +33,24 @@ export function FormRadioGroup<T extends FieldValues>({
   description,
   options,
   disabled,
+  className,
 }: FormRadioGroupProps<T>) {
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className="space-y-3">
+        <FormItem className={`space-y-3 ${className}`}>
           {label && <FormLabel>{label}</FormLabel>}
           <FormControl>
             <RadioGroup
               onValueChange={field.onChange}
               defaultValue={field.value}
               disabled={disabled}
-              className="flex flex-col space-y-1"
+              className="grid w-full grid-cols-2"
             >
               {options.map((option) => (
-                <div
-                  key={option.value}
-                  className="flex items-center space-x-3 space-y-0"
-                >
+                <div key={option.value} className="flex gap-3 items-center ">
                   <FormControl>
                     <RadioGroupItem value={option.value} id={option.value} />
                   </FormControl>

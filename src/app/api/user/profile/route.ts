@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // app/api/user/profile/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
@@ -7,8 +5,7 @@ import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
 import { authOptions } from "@/config/authOptions";
 
-// GET - جلب بيانات المستخدم
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
 
@@ -36,7 +33,6 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// PATCH - تحديث بيانات المستخدم
 export async function PATCH(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -55,7 +51,6 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // الحقول المسموح تحديثها
     const allowedUpdates = [
       "name",
       "dateOfBirth",

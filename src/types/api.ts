@@ -13,7 +13,7 @@ export interface ApiResponse<T = void> {
 export interface ApiErrorResponse {
   message: string;
   messageKey?: string;
-  status: number;
+  status?: number;
   errors?: Record<string, string[]>;
 }
 
@@ -43,7 +43,6 @@ export type VerifyEmailResponse = ApiResponse<{
   email: string;
 }>;
 
-
 // Verify OTP
 export type VerifyOTPResponse = ApiResponse<{
   userId: string;
@@ -54,3 +53,4 @@ export type VerifyOTPResponse = ApiResponse<{
 export type ResendOTPResponse = ApiResponse<{
   phone: string;
 }>;
+

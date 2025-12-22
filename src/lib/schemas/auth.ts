@@ -75,7 +75,7 @@ export const resetPasswordSchema = z
 export const addressSchema = z.object({
   label: z.string().min(1, "errors.labelRequired"),
   fullName: z.string().min(2, "errors.fullNameRequired"),
-  phone: z.string().regex(/^[0-9]{11}$/, "errors.phoneDigits"),
+  phone: z.string().regex(/^[0-9]{10,15}$/, "errors.phoneInvalid"),
   street: z.string().min(5, "errors.streetRequired"),
   city: z.string().min(2, "errors.cityRequired"),
   state: z.string().min(2, "errors.stateRequired"),
@@ -84,9 +84,22 @@ export const addressSchema = z.object({
   isDefault: z.boolean().default(false),
 });
 
-export const profileCompletionStep2Schema = z.object({
-  addresses: z.array(addressSchema).min(1, "errors.atLeastOneAddress"),
-});
+// const
+
+export const profileCompletionStep2Schema = z
+  .object({
+    addresses: z.array(addressSchema).min(1, "errors.atLeastOneAddress"),
+  })
+  .refine(
+    (data) => {
+      const defaultAddresses = data.addresses.filter((addr) => addr.isDefault);
+      return defaultAddresses.length === 1;
+    },
+    {
+      message: "errors.exactlyOneDefault",
+      path: ["addresses"],
+    }
+  );
 
 // ✅ Profile Step 3 Schema
 export const profileCompletionStep3Schema = z.object({
@@ -115,7 +128,6 @@ export const verifyOTPSchema = resendOTPSchema.extend(otpSchema.shape);
 //     .length(6, "OTP must be exactly 6 digits")
 //     .regex(/^\d+$/, "OTP must contain only numbers"),
 // });
-
 
 // export const profileCompletionStep3Schema = z.object({
 //   dateOfBirth: z.string().optional().or(z.literal('')),

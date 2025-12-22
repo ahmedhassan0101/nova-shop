@@ -10,7 +10,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ArrowRight, CheckCircle2, Info, Loader2, LogIn, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  CheckCircle2,
+  Info,
+  Loader2,
+  LogIn,
+  Sparkles,
+} from "lucide-react";
 import Link from "next/link";
 import { useFormHandler } from "@/hooks/useFormHandler";
 import { Form } from "@/components/ui/form";
@@ -46,10 +53,8 @@ export default function LoginPage() {
     onSubmit: handleLogin,
   });
 
-  
   return (
     <div className="w-full space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 relative">
-      
       {/* ✨ Watermark Background */}
       <div className="absolute -top-10 ltr:-right-10 rtl:-left-10  text-primary/5 pointer-events-none select-none">
         <Sparkles className="h-64 w-64 rotate-12" />
@@ -67,18 +72,20 @@ export default function LoginPage() {
       </div>
 
       <div className="space-y-4">
-        {/* ✅ Glassmorphism Success Alerts */}
         {(verified === "true" || passwordReset === "true") && (
-          <Alert className="border-green-500/20 bg-green-500/10 backdrop-blur-md rounded-2xl p-4">
-            <CheckCircle2 className="h-5 w-5 text-green-500" />
+          <Alert className="border-green-500/20 bg-green-500/10 backdrop-blur-md rounded-2xl p-4 flex">
+            <CheckCircle2 className="h-5 w-5 stroke-green-500" />
+
             <AlertDescription className="ml-2 font-bold text-green-700 dark:text-green-400">
-              {verified === "true" ? t("emailVerifiedMessage") : t("passwordResetSuccess")}
+              {verified === "true"
+                ? t("emailVerifiedMessage")
+                : t("passwordResetSuccess")}
             </AlertDescription>
           </Alert>
         )}
 
         {passwordChanged === "true" && (
-          <Alert className="border-blue-500/20 bg-blue-500/10 backdrop-blur-md rounded-2xl p-4">
+          <Alert className="border-blue-500/20 bg-blue-500/10 backdrop-blur-md rounded-2xl p-4 flex">
             <Info className="h-5 w-5 text-primary" />
             <AlertDescription className="ml-2 font-bold text-blue-700 dark:text-blue-300">
               {t("passwordChangedMessage")}
@@ -116,12 +123,16 @@ export default function LoginPage() {
             </div>
 
             {/* 🚀 Login Button - BLUE (Primary) */}
-            <Button 
-              type="submit" 
-              className="w-full h-12 bg-primary hover:bg-primary/90 text-white font-black text-lg rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-95" 
+            <Button
+              type="submit"
+              className="w-full h-12 bg-primary hover:bg-primary/90 text-white font-black text-lg rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-95"
               disabled={isPending}
             >
-              {isPending ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <ArrowRight className="h-5 w-5 mr-2" />}
+              {isPending ? (
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              ) : (
+                <ArrowRight className="h-5 w-5 mr-2" />
+              )}
               {t("submit")}
             </Button>
           </form>
@@ -130,8 +141,14 @@ export default function LoginPage() {
 
       {/* 🔗 Divider & Google Auth */}
       <div className="relative py-4">
-        <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-slate-200 dark:border-slate-800" /></div>
-        <div className="relative flex justify-center text-[10px] uppercase"><span className="bg-background px-4 text-slate-500 font-bold tracking-widest">{t("orContinueWith")}</span></div>
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t border-slate-200 dark:border-slate-800" />
+        </div>
+        <div className="relative flex justify-center text-[10px] uppercase">
+          <span className="bg-background px-4 text-slate-500 font-bold tracking-widest">
+            {t("orContinueWith")}
+          </span>
+        </div>
       </div>
 
       <Button
@@ -146,13 +163,13 @@ export default function LoginPage() {
 
       <p className="text-center text-sm font-medium text-slate-500">
         {t("dontHaveAccount")}{" "}
-        <Link href="/auth/signup" className="text-primary font-black underline-offset-4 hover:underline">
+        <Link
+          href="/auth/signup"
+          className="text-primary font-black underline-offset-4 hover:underline"
+        >
           {t("signUpLink")}
         </Link>
       </p>
     </div>
   );
-
-
 }
-
