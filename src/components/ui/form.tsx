@@ -15,7 +15,7 @@ import {
 
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 const Form = FormProvider;
 
@@ -108,7 +108,7 @@ function FormLabel({
 function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
   const { error, formItemId, formDescriptionId, formMessageId } =
     useFormField();
-
+  const locale = useLocale();
   return (
     <Slot
       data-slot="form-control"
@@ -120,6 +120,7 @@ function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
       }
       aria-invalid={!!error}
       {...props}
+      dir={locale === "ar" ? "rtl" : "ltr"}
     />
   );
 }

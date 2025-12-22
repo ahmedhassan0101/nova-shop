@@ -6,7 +6,7 @@ import { ValidationError } from "./validation";
 interface ApiErrorParams {
   messageKey: string;
   message: string;
-  status: number;
+  status?: number;
 }
 // lib/apiResponse.ts
 export class ApiError extends Error {
@@ -17,7 +17,7 @@ export class ApiError extends Error {
   constructor({ message, messageKey, status }: ApiErrorParams) {
     super(message);
     this.messageKey = messageKey;
-    this.status = status;
+    this.status = status ?? 500;
     this.message = message;
     this.name = "ApiError";
   }

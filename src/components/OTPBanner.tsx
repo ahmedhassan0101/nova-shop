@@ -3,7 +3,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Alert } from "@/components/ui/alert";
 import { Copy, X, ShieldCheck } from "lucide-react"; // إضافة ShieldCheck كأيقونة احترافية
 import { Button } from "@/components/ui/button";
 import { useLatestOTP } from "@/hooks/useAuth";

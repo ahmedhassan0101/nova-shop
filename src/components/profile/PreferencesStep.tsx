@@ -1,572 +1,662 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// components/profile/PreferencesStep.tsx
-"use client";
-
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  profileCompletionStep3Schema,
-  ProfileStep3Input,
-} from "@/lib/schemas/auth";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Switch } from "@/components/ui/switch";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import {
-  Loader2,
-  User,
-  Globe,
-  Bell,
-  Calendar,
-  Mail,
-  CheckCircle2,
-} from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Card, CardContent } from "@/components/ui/card";
-import Link from "next/link";
-
-interface PreferencesStepProps {
-  onComplete: () => void;
-}
-
-export default function PreferencesStep({ onComplete }: PreferencesStepProps) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    watch,
-    setValue,
-  } = useForm<ProfileStep3Input>({
-    resolver: zodResolver(profileCompletionStep3Schema),
-    defaultValues: {
-      preferredLanguage: "ar",
-      newsletter: false,
-    },
-  });
-
-  const onSubmit = async (data: ProfileStep3Input) => {
-    setIsLoading(true);
-    setError("");
-
-    try {
-      const response = await fetch("/api/user/complete-profile", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          step: 3,
-          data: {
-            ...data,
-            dateOfBirth: data.dateOfBirth
-              ? new Date(data.dateOfBirth)
-              : undefined,
-          },
-        }),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || "Failed to update preferences");
-      }
-
-      // Success animation قبل الانتقال
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      onComplete();
-    } catch (err: any) {
-      setError(err.message || "Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="space-y-6 animate-in fade-in duration-500"
-    >
-      {/* Personal Information Section */}
-      <Card>
-        <CardContent className="pt-6 space-y-4">
-          <div className="flex items-center gap-2 pb-2 border-b">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <User className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold">Personal Information</h3>
-              <p className="text-sm text-muted-foreground">
-                Help us personalize your experience
-              </p>
-            </div>
-          </div>
-
-          {/* Date of Birth */}
-          <div className="space-y-2">
-            <Label htmlFor="dateOfBirth" className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-              Date of Birth
-              <span className="text-xs text-muted-foreground">(Optional)</span>
-            </Label>
-            <Input
-              id="dateOfBirth"
-              type="date"
-              max={new Date().toISOString().split("T")[0]}
-              {...register("dateOfBirth")}
-              disabled={isLoading}
-              className="w-full"
-            />
-            {errors.dateOfBirth && (
-              <p className="text-sm text-destructive flex items-center gap-1">
-                <span className="text-xs">⚠️</span>
-                {errors.dateOfBirth.message}
-              </p>
-            )}
-          </div>
-
-          {/* Gender */}
-          <div className="space-y-3">
-            <Label className="flex items-center gap-2">
-              <User className="h-4 w-4 text-muted-foreground" />
-              Gender
-              <span className="text-xs text-muted-foreground">(Optional)</span>
-            </Label>
-            <RadioGroup
-              value={watch("gender") || ""}
-              onValueChange={(value: any) => setValue("gender", value)}
-              disabled={isLoading}
-              className="grid grid-cols-2 gap-4"
-            >
-              {[
-                { value: "male", label: "Male", icon: "👨" },
-                { value: "female", label: "Female", icon: "👩" },
-                // { value: "other", label: "Other", icon: "🧑" },
-              ].map((option) => (
-                <div key={option.value}>
-                  <RadioGroupItem
-                    value={option.value}
-                    id={option.value}
-                    className="peer sr-only"
-                  />
-                  <Label
-                    htmlFor={option.value}
-                    className="flex flex-col items-center justify-center gap-2 rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer transition-all"
-                  >
-                    <span className="text-2xl">{option.icon}</span>
-                    <span className="text-sm font-medium">{option.label}</span>
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
-            {errors.gender && (
-              <p className="text-sm text-destructive">
-                {errors.gender.message}
-              </p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Language & Preferences Section */}
-      <Card>
-        <CardContent className="pt-6 space-y-4">
-          <div className="flex items-center gap-2 pb-2 border-b">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <Globe className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold">Language Preference</h3>
-              <p className="text-sm text-muted-foreground">
-                Choose your preferred language
-              </p>
-            </div>
-          </div>
-
-          {/* Preferred Language */}
-          <div className="space-y-2">
-            <Label htmlFor="preferredLanguage">Website Language</Label>
-            <Select
-              value={watch("preferredLanguage")}
-              onValueChange={(value: any) =>
-                setValue("preferredLanguage", value)
-              }
-              disabled={isLoading}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select language" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ar">
-                  <div className="flex items-center gap-2">
-                    <span>🇪🇬</span>
-                    <span>العربية</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="en">
-                  <div className="flex items-center gap-2">
-                    <span>🇬🇧</span>
-                    <span>English</span>
-                  </div>
-                </SelectItem>
-              </SelectContent>
-            </Select>
-            {errors.preferredLanguage && (
-              <p className="text-sm text-destructive">
-                {errors.preferredLanguage.message}
-              </p>
-            )}
-            <div className="flex items-start gap-2 p-3 rounded-lg bg-muted/50">
-              <CheckCircle2 className="h-4 w-4 text-primary mt-0.5" />
-              <p className="text-xs text-muted-foreground">
-                You can change the language anytime from your profile settings
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Notifications Section */}
-      <Card>
-        <CardContent className="pt-6 space-y-4">
-          <div className="flex items-center gap-2 pb-2 border-b">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <Bell className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold">Email Notifications</h3>
-              <p className="text-sm text-muted-foreground">
-                Stay updated with our latest offers
-              </p>
-            </div>
-          </div>
-
-          {/* Newsletter */}
-          <div className="flex items-start justify-between gap-4 p-4 border rounded-lg hover:bg-accent/50 transition-colors">
-            <div className="space-y-1 flex-1">
-              <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-primary" />
-                <Label
-                  htmlFor="newsletter"
-                  className="text-base font-medium cursor-pointer"
-                >
-                  Newsletter Subscription
-                </Label>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Get exclusive deals, new arrivals, and special offers delivered
-                to your inbox
-              </p>
-              <div className="flex flex-wrap gap-2 mt-2">
-                <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
-                  New Products
-                </span>
-                <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
-                  Special Offers
-                </span>
-                <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
-                  Sales
-                </span>
-              </div>
-            </div>
-            <Switch
-              id="newsletter"
-              checked={watch("newsletter")}
-              onCheckedChange={(checked) => setValue("newsletter", checked)}
-              disabled={isLoading}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Info Alert */}
-      <Alert className="border-primary/20 bg-primary/5">
-        <CheckCircle2 className="h-4 w-4 text-primary" />
-        <AlertDescription className="text-sm ml-2">
-          <strong className="text-primary">Almost done!</strong> You can update
-          these settings anytime from your profile.
-        </AlertDescription>
-      </Alert>
-
-      {error && (
-        <Alert variant="destructive">
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
-      {/* Action Buttons */}
-      <div className="flex gap-3 pt-4">
-        <Button
-          type="button"
-          variant="outline"
-          className="flex-1"
-          onClick={() => window.history.back()}
-          disabled={isLoading}
-        >
-          Back
-        </Button>
-        <Button type="submit" className="flex-1" disabled={isLoading}>
-          {isLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Saving...
-            </>
-          ) : (
-            <>
-              <CheckCircle2 className="mr-2 h-4 w-4" />
-              Complete Setup
-            </>
-          )}
-        </Button>
-      </div>
-
-      {/* Privacy Notice */}
-      <p className="text-xs text-center text-muted-foreground">
-        By completing your profile, you agree to our{" "}
-        <Link href="/privacy" className="underline hover:text-primary">
-          Privacy Policy
-        </Link>{" "}
-        and{" "}
-        <Link href="/terms" className="underline hover:text-primary">
-          Terms of Service
-        </Link>
-      </p>
-    </form>
-  );
-}
-
-// /* eslint-disable @typescript-eslint/no-explicit-any */
 // // components/profile/PreferencesStep.tsx
-// 'use client';
+// "use client";
 
-// import { useState } from 'react';
-// import { useForm } from 'react-hook-form';
-// import { zodResolver } from '@hookform/resolvers/zod';
-// import { profileCompletionStep3Schema, ProfileStep3Input } from '@/lib/validations/auth';
-// import { Button } from '@/components/ui/button';
-// import { Input } from '@/components/ui/input';
-// import { Label } from '@/components/ui/label';
-// import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-// import { Switch } from '@/components/ui/switch';
-// import { Alert, AlertDescription } from '@/components/ui/alert';
-// import { Loader2, User, Globe, Bell, Calendar } from 'lucide-react';
 // import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectValue,
-// } from '@/components/ui/select';
+//   profileCompletionStep3Schema,
+//   type ProfileStep3Input,
+// } from "@/lib/schemas/auth";
+// import { Button } from "@/components/ui/button";
+// import { Label } from "@/components/ui/label";
+// import { Alert, AlertDescription } from "@/components/ui/alert";
+// import { Loader2, User, Globe, Bell, Mail, CheckCircle2 } from "lucide-react";
+
+// import { Card, CardContent } from "@/components/ui/card";
+// import Link from "next/link";
+// import { Form } from "../ui/form";
+// import { useFormHandler } from "@/hooks/useFormHandler";
+// import { FormDatePicker } from "../form-fields/FormDatePicker";
+// import { FormRadioGroup } from "../form-fields/FormRadioGroup";
+// import { FormSelect } from "../form-fields/FormSelect";
+// import { FormSwitch } from "../form-fields/FormSwitch";
+// import { useTranslations } from "next-intl";
+// import { usePreferencesStep } from "@/hooks/useProfile";
+// import { useEffect } from "react";
 
 // interface PreferencesStepProps {
 //   onComplete: () => void;
 // }
 
 // export default function PreferencesStep({ onComplete }: PreferencesStepProps) {
-//   const [isLoading, setIsLoading] = useState(false);
-//   const [error, setError] = useState('');
+//   const t = useTranslations("profile");
+//   const { mutate, isPending, isSuccess } = usePreferencesStep();
+//   const handleLogin = async (data: ProfileStep3Input) => {
+//     mutate({ step: 3, data });
+//   };
+//   useEffect(() => {
+//     if (isSuccess) onComplete();
+//   }, [isSuccess, onComplete]);
 
-//   const {
-//     register,
-//     handleSubmit,
-//     formState: { errors },
-//     watch,
-//     setValue,
-//   } = useForm<ProfileStep3Input>({
-//     resolver: zodResolver(profileCompletionStep3Schema),
+//   const { form, onSubmit } = useFormHandler({
+//     schema: profileCompletionStep3Schema,
 //     defaultValues: {
-//       preferredLanguage: 'ar',
+//       preferredLanguage: "ar",
 //       newsletter: false,
 //     },
+//     onSubmit: handleLogin,
 //   });
 
-//   const onSubmit = async (data: ProfileStep3Input) => {
-//     setIsLoading(true);
-//     setError('');
-
-//     try {
-//       const response = await fetch('/api/user/complete-profile', {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify({
-//           step: 3,
-//           data: {
-//             ...data,
-//             dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : undefined,
-//           }
-//         }),
-//       });
-
-//       if (!response.ok) {
-//         throw new Error('Failed to update preferences');
-//       }
-
-//       onComplete();
-//     } catch (err: any) {
-//       setError(err.message || 'Something went wrong');
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   };
+//   const isLoading = form.formState.isSubmitting || isPending;
 
 //   return (
-//     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-//       {/* Personal Information Section */}
-//       <div className="space-y-4">
-//         <div className="flex items-center gap-2 pb-2 border-b">
-//           <User className="h-5 w-5 text-primary" />
-//           <h3 className="text-lg font-semibold">Personal Information</h3>
-//         </div>
-
-//         {/* Date of Birth */}
-//         <div className="space-y-2">
-//           <Label htmlFor="dateOfBirth" className="flex items-center gap-2">
-//             <Calendar className="h-4 w-4" />
-//             Date of Birth (Optional)
-//           </Label>
-//           <Input
-//             id="dateOfBirth"
-//             type="date"
-//             max={new Date().toISOString().split('T')[0]}
-//             {...register('dateOfBirth')}
-//             disabled={isLoading}
-//           />
-//           {errors.dateOfBirth && (
-//             <p className="text-sm text-destructive">{errors.dateOfBirth.message}</p>
-//           )}
-//         </div>
-
-//         {/* Gender */}
-//         <div className="space-y-3">
-//           <Label>Gender (Optional)</Label>
-//           <RadioGroup
-//             value={watch('gender') || ''}
-//             onValueChange={(value: any) => setValue('gender', value)}
-//             disabled={isLoading}
-//           >
-//             <div className="flex items-center space-x-2 rtl:space-x-reverse">
-//               <RadioGroupItem value="male" id="male" />
-//               <Label htmlFor="male" className="cursor-pointer font-normal">
-//                 Male
-//               </Label>
+//     <Form {...form}>
+//       <form
+//         onSubmit={onSubmit}
+//         className="space-y-6 animate-in fade-in duration-500"
+//       >
+//         {/* Personal Information */}
+//         <Card>
+//           <CardContent className="pt-6 space-y-4">
+//             <div className="flex items-center gap-2 pb-2 border-b">
+//               <div className="p-2 rounded-lg bg-primary/10">
+//                 <User className="h-5 w-5 text-primary" />
+//               </div>
+//               <div>
+//                 <h3 className="text-lg font-semibold">
+//                   {t("personalInfo.title")}
+//                 </h3>
+//                 <p className="text-sm text-muted-foreground">
+//                   {t("personalInfo.description")}
+//                 </p>
+//               </div>
 //             </div>
-//             <div className="flex items-center space-x-2 rtl:space-x-reverse">
-//               <RadioGroupItem value="female" id="female" />
-//               <Label htmlFor="female" className="cursor-pointer font-normal">
-//                 Female
-//               </Label>
+
+//             <FormDatePicker
+//               control={form.control}
+//               name="dateOfBirth"
+//               label={t("dateOfBirth.label")}
+//               description={t("dateOfBirth.description")}
+//               placeholder={t("dateOfBirth.placeholder")}
+//               disabled={isLoading}
+//             />
+
+//             <FormRadioGroup
+//               control={form.control}
+//               name="gender"
+//               label={t("gender.label")}
+//               description={t("gender.description")}
+//               options={[
+//                 { value: "male", label: t("gender.male") },
+//                 { value: "female", label: t("gender.female") },
+//               ]}
+//               disabled={isLoading}
+//             />
+//           </CardContent>
+//         </Card>
+
+//         {/* Language Preference */}
+//         <Card>
+//           <CardContent className="pt-6 space-y-4">
+//             <div className="flex items-center gap-2 pb-2 border-b">
+//               <div className="p-2 rounded-lg bg-primary/10">
+//                 <Globe className="h-5 w-5 text-primary" />
+//               </div>
+//               <div>
+//                 <h3 className="text-lg font-semibold">{t("language.title")}</h3>
+//                 <p className="text-sm text-muted-foreground">
+//                   {t("language.description")}
+//                 </p>
+//               </div>
 //             </div>
-//             <div className="flex items-center space-x-2 rtl:space-x-reverse">
-//               <RadioGroupItem value="other" id="other" />
-//               <Label htmlFor="other" className="cursor-pointer font-normal">
-//                 Other
-//               </Label>
+
+//             <FormSelect
+//               control={form.control}
+//               name="preferredLanguage"
+//               label={t("language.label")}
+//               options={[
+//                 { value: "ar", label: "العربية" },
+//                 { value: "en", label: "English" },
+//               ]}
+//               placeholder={t("language.placeholder")}
+//               disabled={isLoading}
+//             />
+
+//             <div className="flex items-start gap-2 p-3 rounded-lg bg-muted/50">
+//               <CheckCircle2 className="h-4 w-4 text-primary mt-0.5" />
+//               <p className="text-xs text-muted-foreground">
+//                 {t("language.note")}
+//               </p>
 //             </div>
-//           </RadioGroup>
-//           {errors.gender && (
-//             <p className="text-sm text-destructive">{errors.gender.message}</p>
-//           )}
-//         </div>
-//       </div>
+//           </CardContent>
+//         </Card>
 
-//       {/* Language & Preferences Section */}
-//       <div className="space-y-4">
-//         <div className="flex items-center gap-2 pb-2 border-b">
-//           <Globe className="h-5 w-5 text-primary" />
-//           <h3 className="text-lg font-semibold">Language & Preferences</h3>
-//         </div>
+//         {/* Notifications */}
+//         <Card>
+//           <CardContent className="pt-6 space-y-4">
+//             <div className="flex items-center gap-2 pb-2 border-b">
+//               <div className="p-2 rounded-lg bg-primary/10">
+//                 <Bell className="h-5 w-5 text-primary" />
+//               </div>
+//               <div>
+//                 <h3 className="text-lg font-semibold">
+//                   {t("notifications.title")}
+//                 </h3>
+//                 <p className="text-sm text-muted-foreground">
+//                   {t("notifications.description")}
+//                 </p>
+//               </div>
+//             </div>
 
-//         {/* Preferred Language */}
-//         <div className="space-y-2">
-//           <Label htmlFor="preferredLanguage">Preferred Language</Label>
-//           <Select
-//             value={watch('preferredLanguage')}
-//             onValueChange={(value: any) => setValue('preferredLanguage', value)}
-//             disabled={isLoading}
-//           >
-//             <SelectTrigger>
-//               <SelectValue placeholder="Select language" />
-//             </SelectTrigger>
-//             <SelectContent>
-//               <SelectItem value="ar">العربية (Arabic)</SelectItem>
-//               <SelectItem value="en">English</SelectItem>
-//             </SelectContent>
-//           </Select>
-//           {errors.preferredLanguage && (
-//             <p className="text-sm text-destructive">
-//               {errors.preferredLanguage.message}
-//             </p>
-//           )}
-//           <p className="text-xs text-muted-foreground">
-//             This will be your default language for the website
-//           </p>
-//         </div>
-//       </div>
+//             <div className="flex items-start justify-between gap-4 p-4 border rounded-lg">
+//               <div className="space-y-1 flex-1">
+//                 <div className="flex items-center gap-2">
+//                   <Mail className="h-4 w-4 text-primary" />
+//                   <Label className="text-base font-medium">
+//                     {t("newsletter.label")}
+//                   </Label>
+//                 </div>
+//                 <p className="text-sm text-muted-foreground">
+//                   {t("newsletter.description")}
+//                 </p>
+//               </div>
+//               <FormSwitch
+//                 control={form.control}
+//                 name="newsletter"
+//                 disabled={isLoading}
+//               />
+//             </div>
+//           </CardContent>
+//         </Card>
 
-//       {/* Notifications Section */}
-//       <div className="space-y-4">
-//         <div className="flex items-center gap-2 pb-2 border-b">
-//           <Bell className="h-5 w-5 text-primary" />
-//           <h3 className="text-lg font-semibold">Notifications</h3>
-//         </div>
-
-//         {/* Newsletter */}
-//         <div className="flex items-center justify-between p-4 border rounded-lg">
-//           <div className="space-y-0.5">
-//             <Label htmlFor="newsletter" className="text-base font-medium">
-//               Newsletter Subscription
-//             </Label>
-//             <p className="text-sm text-muted-foreground">
-//               Receive updates about new products, offers, and promotions
-//             </p>
-//           </div>
-//           <Switch
-//             id="newsletter"
-//             checked={watch('newsletter')}
-//             onCheckedChange={(checked) => setValue('newsletter', checked)}
-//             disabled={isLoading}
-//           />
-//         </div>
-//       </div>
-
-//       {/* Info Box */}
-//       <Alert>
-//         <AlertDescription className="text-sm">
-//           <strong>Note:</strong> You can change these preferences anytime from your profile settings.
-//         </AlertDescription>
-//       </Alert>
-
-//       {error && (
-//         <Alert variant="destructive">
-//           <AlertDescription>{error}</AlertDescription>
+//         {/* Info Alert */}
+//         <Alert className="border-primary/20 bg-primary/5">
+//           <CheckCircle2 className="h-4 w-4 text-primary" />
+//           <AlertDescription className="text-sm ml-2">
+//             <strong className="text-primary">{t("alert.title")}</strong>{" "}
+//             {t("alert.description")}
+//           </AlertDescription>
 //         </Alert>
-//       )}
 
-//       {/* Submit Button */}
-//       <div className="flex gap-3">
-//         <Button
-//           type="button"
-//           variant="outline"
-//           className="flex-1"
-//           onClick={() => window.history.back()}
-//           disabled={isLoading}
-//         >
-//           Back
-//         </Button>
-//         <Button type="submit" className="flex-1" disabled={isLoading}>
-//           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-//           Complete Setup
-//         </Button>
-//       </div>
-//     </form>
+//         {/* Action Buttons */}
+//         <div className="flex gap-3 pt-4">
+//           <Button
+//             type="button"
+//             variant="outline"
+//             className="flex-1"
+//             onClick={() => window.history.back()}
+//             disabled={isLoading}
+//           >
+//             {t("buttons.back")}
+//           </Button>
+//           <Button type="submit" className="flex-1" disabled={isLoading}>
+//             {isLoading ? (
+//               <>
+//                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+//                 {t("buttons.saving")}
+//               </>
+//             ) : (
+//               <>
+//                 <CheckCircle2 className="mr-2 h-4 w-4" />
+//                 {t("buttons.complete")}
+//               </>
+//             )}
+//           </Button>
+//         </div>
+
+//         {/* Privacy Notice */}
+//         <p className="text-xs text-center text-muted-foreground">
+//           {t("privacy.text")}{" "}
+//           <Link href="/privacy" className="underline hover:text-primary">
+//             {t("privacy.privacyPolicy")}
+//           </Link>{" "}
+//           {t("privacy.and")}{" "}
+//           <Link href="/terms" className="underline hover:text-primary">
+//             {t("privacy.terms")}
+//           </Link>
+//         </p>
+//       </form>
+//     </Form>
 //   );
 // }
+// "use client";
+
+// import {
+//   profileCompletionStep3Schema,
+//   type ProfileStep3Input,
+// } from "@/lib/schemas/auth";
+// import { Button } from "@/components/ui/button";
+// import { Label } from "@/components/ui/label";
+// import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+// import {
+//   Loader2,
+//   User,
+//   Globe,
+//   Bell,
+//   Mail,
+//   Info,
+//   CheckCircle,
+//   ArrowRight,
+// } from "lucide-react";
+// import Link from "next/link";
+// import { Form } from "../ui/form";
+// import { useFormHandler } from "@/hooks/useFormHandler";
+// import { FormDatePicker } from "../form-fields/FormDatePicker";
+// import { FormRadioGroup } from "../form-fields/FormRadioGroup";
+// import { FormSelect } from "../form-fields/FormSelect";
+// import { FormSwitch } from "../form-fields/FormSwitch";
+// import { useTranslations } from "next-intl";
+// import { usePreferencesStep } from "@/hooks/useProfile";
+// import { useEffect } from "react";
+// import { motion } from "framer-motion";
+
+// interface PreferencesStepProps {
+//   onComplete: () => void;
+// }
+
+// export default function PreferencesStep({ onComplete }: PreferencesStepProps) {
+//   const t = useTranslations("profile");
+//   const { mutate, isPending, isSuccess } = usePreferencesStep();
+
+//   const handleLogin = async (data: ProfileStep3Input) => {
+//     mutate({ step: 3, data });
+//   };
+
+//   useEffect(() => {
+//     if (isSuccess) onComplete();
+//   }, [isSuccess, onComplete]);
+
+//   const { form, onSubmit } = useFormHandler({
+//     schema: profileCompletionStep3Schema,
+//     defaultValues: {
+//       preferredLanguage: "ar",
+//       newsletter: false,
+//       gender: "male",
+//     },
+//     onSubmit: handleLogin,
+//   });
+
+//   const isLoading = form.formState.isSubmitting || isPending;
+
+//   // Reusable Section Component for cleaner code
+//   const Section = ({ icon: Icon, title, description, children }: any) => (
+//     <motion.div
+//       initial={{ opacity: 0, y: 10 }}
+//       whileInView={{ opacity: 1, y: 0 }}
+//       viewport={{ once: true }}
+//       className="pb-8 border-b border-gray-100 last:border-0 last:pb-0"
+//     >
+//       <div className="flex gap-4 mb-6">
+//         <div className="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
+//           <Icon className="w-5 h-5" />
+//         </div>
+//         <div>
+//           <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+//           <p className="text-sm text-gray-500">{description}</p>
+//         </div>
+//       </div>
+//       <div className="pl-0 sm:pl-14 space-y-6">{children}</div>
+//     </motion.div>
+//   );
+
+//   return (
+//     <div className="space-y-8">
+//       <div className="space-y-1">
+//         <h2 className="text-2xl font-semibold text-gray-900">
+//           {t("preferencesTitle", { defaultValue: "Personalize Experience" })}
+//         </h2>
+//         <p className="text-sm text-muted-foreground">
+//           {t("preferencesDesc", {
+//             defaultValue: "Customize your profile settings and notifications.",
+//           })}
+//         </p>
+//       </div>
+
+//       <Form {...form}>
+//         <form onSubmit={onSubmit} className="space-y-8">
+//           {/* 1. Personal Info Section */}
+//           <Section
+//             icon={User}
+//             title={t("personalInfo.title")}
+//             description={t("personalInfo.description")}
+//           >
+//             <div className="grid gap-6 sm:grid-cols-2">
+//               <FormDatePicker
+//                 control={form.control}
+//                 name="dateOfBirth"
+//                 label={t("dateOfBirth.label")}
+//                 description={t("dateOfBirth.description")}
+//                 placeholder={t("dateOfBirth.placeholder")}
+//                 disabled={isLoading}
+//               />
+//               <FormRadioGroup
+//                 control={form.control}
+//                 name="gender"
+//                 label={t("gender.label")}
+//                 description={t("gender.description")}
+//                 options={[
+//                   { value: "male", label: t("gender.male") },
+//                   { value: "female", label: t("gender.female") },
+//                 ]}
+//                 disabled={isLoading}
+//                 className="space-y-3"
+//               />
+//             </div>
+//           </Section>
+
+//           {/* 2. Language Section */}
+//           <Section
+//             icon={Globe}
+//             title={t("language.title")}
+//             description={t("language.description")}
+//           >
+//             <div className="max-w-md">
+//               <FormSelect
+//                 control={form.control}
+//                 name="preferredLanguage"
+//                 label={t("language.label")}
+//                 options={[
+//                   { value: "ar", label: "العربية (Arabic)" },
+//                   { value: "en", label: "English (United States)" },
+//                 ]}
+//                 placeholder={t("language.placeholder")}
+//                 disabled={isLoading}
+//               />
+//             </div>
+//             <div className="flex items-center gap-2 text-sm text-amber-600 bg-amber-50 p-3 rounded-md border border-amber-100">
+//               <Info className="w-4 h-4" />
+//               {t("language.note")}
+//             </div>
+//           </Section>
+
+//           {/* 3. Notifications Section */}
+//           <Section
+//             icon={Bell}
+//             title={t("notifications.title")}
+//             description={t("notifications.description")}
+//           >
+//             <div className="flex items-center justify-between p-4 rounded-xl border border-gray-200 bg-gray-50/50 hover:bg-white hover:border-emerald-200 transition-colors">
+//               <div className="flex items-center gap-3">
+//                 <Mail className="h-5 w-5 text-gray-400" />
+//                 <div>
+//                   <Label className="text-base font-medium text-gray-900 cursor-pointer">
+//                     {t("newsletter.label")}
+//                   </Label>
+//                   <p className="text-sm text-gray-500 mt-0.5">
+//                     {t("newsletter.description")}
+//                   </p>
+//                 </div>
+//               </div>
+//               <FormSwitch
+//                 control={form.control}
+//                 name="newsletter"
+//                 disabled={isLoading}
+//                 className="data-[state=checked]:bg-emerald-600"
+//               />
+//             </div>
+//           </Section>
+
+//           {/* Completion Alert */}
+//           <Alert className="border-emerald-200 bg-emerald-50 text-emerald-900">
+//             <CheckCircle className="h-4 w-4 text-emerald-600" />
+//             <AlertTitle className="text-emerald-800 font-semibold ml-2">
+//               {t("alert.title")}
+//             </AlertTitle>
+//             <AlertDescription className="ml-2 text-emerald-700/90">
+//               {t("alert.description")}
+//             </AlertDescription>
+//           </Alert>
+
+//           {/* Action Buttons */}
+//           <div className="flex flex-col sm:flex-row gap-4 pt-4">
+//             <Button
+//               type="button"
+//               variant="outline"
+//               size="lg"
+//               className="flex-1 h-12 text-base rounded-xl hover:bg-gray-50"
+//               onClick={() => window.history.back()}
+//               disabled={isLoading}
+//             >
+//               {t("buttons.back")}
+//             </Button>
+//             <Button
+//               type="submit"
+//               size="lg"
+//               className="flex-1 h-12 text-base font-semibold bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-200 rounded-xl"
+//               disabled={isLoading}
+//             >
+//               {isLoading ? (
+//                 <>
+//                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+//                   {t("buttons.saving")}
+//                 </>
+//               ) : (
+//                 <>
+//                   {t("buttons.complete")}
+//                   <ArrowRight className="ml-2 h-5 w-5" />
+//                 </>
+//               )}
+//             </Button>
+//           </div>
+
+//           {/* Footer Links */}
+//           <p className="text-xs text-center text-gray-400 mt-6">
+//             {t("privacy.text")}{" "}
+//             <Link
+//               href="/privacy"
+//               className="underline hover:text-emerald-600 transition-colors"
+//             >
+//               {t("privacy.privacyPolicy")}
+//             </Link>{" "}
+//             {t("privacy.and")}{" "}
+//             <Link
+//               href="/terms"
+//               className="underline hover:text-emerald-600 transition-colors"
+//             >
+//               {t("privacy.terms")}
+//             </Link>
+//           </p>
+//         </form>
+//       </Form>
+//     </div>
+//   );
+// }
+"use client";
+
+import { useEffect } from "react";
+import { useTranslations } from "next-intl";
+import { useFormHandler } from "@/hooks/useFormHandler"; // Assuming this hook exists
+import {
+  profileCompletionStep3Schema,
+  type ProfileStep3Input,
+} from "@/lib/schemas/auth";
+import { usePreferencesStep } from "@/hooks/useProfile"; // Assuming this hook exists
+
+// UI Components
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Form } from "../ui/form";
+import { FormDatePicker } from "../form-fields/FormDatePicker";
+import { FormSelect } from "../form-fields/FormSelect";
+import { FormSwitch } from "../form-fields/FormSwitch";
+
+// Icons
+import {
+  Loader2,
+  CheckCircle2,
+  Calendar,
+  UserCircle2,
+  Languages,
+  BellRing,
+  ShieldCheck,
+  ChevronRight,
+  User,
+  UserRound,
+  Mars,
+  Venus,
+  Globe,
+  Mail,
+  Eye,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { FormRadioGroup } from "../form-fields/FormRadioGroup";
+
+interface PreferencesStepProps {
+  onComplete: () => void;
+}
+
+export default function PreferencesStep({ onComplete }: PreferencesStepProps) {
+  const t = useTranslations("profile");
+  const { mutate, isPending, isSuccess } = usePreferencesStep();
+
+  const handlePreferencesSubmit = async (data: ProfileStep3Input) => {
+    mutate({ step: 3, data });
+  };
+
+  useEffect(() => {
+    if (isSuccess) onComplete();
+  }, [isSuccess, onComplete]);
+
+  const { form, onSubmit } = useFormHandler({
+    schema: profileCompletionStep3Schema,
+    defaultValues: {
+      preferredLanguage: "ar",
+      newsletter: false,
+      gender: "male", // default fallback
+    },
+    onSubmit: handlePreferencesSubmit,
+  });
+
+  const isLoading = form.formState.isSubmitting || isPending;
+
+  return (
+    <div className="w-full container mx-auto space-y-3">
+      {/* Header Text */}
+      <div className="flex flex-col gap-2 rounded-3xl bg-card p-6 shadow-sm border-2">
+        <h2 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-foreground">
+          <UserCircle2 className="w-6 h-6 text-emerald-600" />
+          {t("preferencesTitle", {
+            defaultValue: "Personalize Your Experience",
+          })}
+        </h2>
+        <p className="text-muted-foreground text-base">
+          {t("preferencesDesc", {
+            defaultValue:
+              "Tell us a bit more about you to get tailored recommendations.",
+          })}
+        </p>
+      </div>
+
+      <Form {...form}>
+        <form onSubmit={onSubmit} className="space-y-3">
+          {/* 1. Basic Info Section */}
+          <div className="border-2 bg-card text-card-foreground rounded-3xl shadow-sm transition-all duration-200 p-6">
+            <div className="grid gap-5 sm:grid-cols-2">
+              <FormDatePicker
+                control={form.control}
+                name="dateOfBirth"
+                label={t("dateOfBirth.label")}
+                description={t("dateOfBirth.description")}
+                placeholder={t("dateOfBirth.placeholder")}
+                disabled={isLoading}
+              />
+
+              {/* Custom Radio Group using simple div and logic or provided component */}
+              {/* <div className="grid grid-cols-2 gap-4">
+                {["male", "female"].map((g) => (
+                  <button
+                    key={g}
+                    type="button"
+                    onClick={() => form.setValue("gender", g)}
+                    className={cn(
+                      "flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all",
+                      form.watch("gender") === g
+                        ? "border-emerald-500 bg-emerald-50 text-emerald-700"
+                        : "border-gray-100 hover:border-emerald-200"
+                    )}
+                  >
+                    {g === "male" ? (
+                      <Mars className="size-8 mb-2" />
+                    ) : (
+                      <Venus className="size-8 mb-2" />
+                    )}
+                    <span className="font-medium capitalize">
+                      {t(`gender.${g}`)}
+                    </span>
+                  </button>
+                ))}
+              </div> */}
+              <FormRadioGroup
+                control={form.control}
+                name="gender"
+                label={t("gender.label")}
+                description={t("gender.description")}
+                options={[
+                  { value: "male", label: t("gender.male") },
+                  { value: "female", label: t("gender.female") },
+                ]}
+                disabled={isLoading}
+                className="space-y-3"
+              />
+              <div className="grid gap-5 col-span-full">
+                {/* 2. Language & Localization */}
+
+                <FormSelect
+                  control={form.control}
+                  name="preferredLanguage"
+                  label={t("language.label")}
+                  options={[
+                    { value: "ar", label: "العربية (Arabic)" },
+                    { value: "en", label: "English (US)" },
+                  ]}
+                  placeholder={t("language.placeholder")}
+                  disabled={isLoading}
+                  description={t("language.note", {
+                    defaultValue:
+                      "We use this for emails and interface language.",
+                  })}
+                />
+
+                {/* 3. Notifications */}
+                <FormSwitch
+                  control={form.control}
+                  label={t("newsletter.label", {
+                    defaultValue: "Subscribe to Newsletter",
+                  })}
+                  description={t("newsletter.description", {
+                    defaultValue:
+                      "Get exclusive offers and new arrivals directly to your inbox.",
+                  })}
+                  name="newsletter"
+                  disabled={isLoading}
+                  className="data-[state=checked]:bg-emerald-600"
+                />
+              </div>
+            </div>
+          </div>
+          {/* Action Buttons */}
+
+          <div className="pt-6 mt-6 border-t-2 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <Button
+              type="submit"
+              size="lg"
+              className=" sm:col-start-2 lg:col-start-3  h-12 rounded-2xl font-semibold "
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  {t("buttons.saving", { defaultValue: "Saving..." })}
+                </>
+              ) : (
+                <>
+                  {t("buttons.complete", { defaultValue: "Complete Setup" })}
+                  <ChevronRight className="ml-2 h-5 w-5" />
+                </>
+              )}
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </div>
+  );
+}

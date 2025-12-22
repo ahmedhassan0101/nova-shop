@@ -52,18 +52,6 @@ export async function POST(req: NextRequest) {
       profileCompletionStep: 0,
     };
 
-    // const user = await User.create({
-    //   name,
-    //   email: email || undefined,
-    //   phone: phone || undefined,
-    //   password: hashedPassword,
-    //   profileCompletionStep: 0,
-    // verificationToken,
-    // verificationTokenExpires,
-    // });
-
-    // const userResponse = user.toObject();
-    // delete userResponse.password;
 
     if (registerWith === "email" && email) {
       const verificationToken = crypto.randomBytes(32).toString("hex");

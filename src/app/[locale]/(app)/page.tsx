@@ -5,8 +5,7 @@ export default function Home() {
   return (
     <div className="">
       <HeroSection />
-
-      <section className="page-container relative pt-44">123</section>
+      <section className="page-container relative pt-44"></section>
     </div>
   );
 }

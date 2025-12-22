@@ -49,7 +49,7 @@ export async function middleware(request: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  // ✅ NEW: Redirect authenticated users away from auth pages
+  // Redirect authenticated users away from auth pages
   const authPaths = ["/auth/login", "/auth/signup", "/auth/forgot-password"];
   if (authPaths.some((p) => pathWithoutLocale.startsWith(p)) && token) {
     // If user is logged in and trying to access auth pages
@@ -66,13 +66,13 @@ export async function middleware(request: NextRequest) {
   // 5. Authentication Check (Protecting routes requiring login)
   const protectedPaths = ["/profile", "/orders", "/checkout", "/wishlist"];
   // If the path is protected AND the user is NOT logged in (!token)
-  // if (protectedPaths.some((p) => pathWithoutLocale.startsWith(p)) && !token) {
-  //   // Redirect to the login page
-  //   const url = new URL(`/${locale}/auth/login`, request.url);
-  //   // Add the current path as a callback URL for redirection after successful login
-  //   url.searchParams.set("callbackUrl", pathname);
-  //   return NextResponse.redirect(url);
-  // }
+  if (protectedPaths.some((p) => pathWithoutLocale.startsWith(p)) && !token) {
+    // Redirect to the login page
+    const url = new URL(`/${locale}/auth/login`, request.url);
+    // Add the current path as a callback URL for redirection after successful login
+    url.searchParams.set("callbackUrl", pathname);
+    return NextResponse.redirect(url);
+  }
 
   // 6. Authorization Check (Admin Access)
   // If the path starts with "/admin" AND the user is logged in but their role is NOT "admin"
@@ -96,6 +96,15 @@ export async function middleware(request: NextRequest) {
   //   return NextResponse.redirect(
   //     new URL(`/${locale}/profile/complete`, request.url)
   //   );
+  // }
+
+  // // 7.5. Prevent Completed Users from Accessing Completion Page
+  // if (
+  //   token &&
+  //   token.isProfileComplete &&
+  //   pathWithoutLocale.startsWith("/profile/complete")
+  // ) {
+  //   return NextResponse.redirect(new URL(`/${locale}/`, request.url));
   // }
 
   // 8. Continue Execution

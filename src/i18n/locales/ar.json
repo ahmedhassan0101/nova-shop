@@ -494,6 +494,76 @@
       "general": "حدث خطأ غير متوقع. يرجى المحاولة لاحقًا."
     }
   },
+  "profile": {
+    "address": "العنوان",
+    "default": "افتراضي",
+    "label": "التسمية",
+    "labelPlaceholder": "مثال: المنزل، العمل",
+    "fullName": "الاسم الكامل",
+    "fullNamePlaceholder": "أدخل الاسم الكامل",
+    "phone": "رقم الهاتف",
+    "phonePlaceholder": "01XXXXXXXXX",
+    "country": "الدولة",
+    "countryPlaceholder": "اختر الدولة",
+    "street": "الشارع",
+    "streetPlaceholder": "رقم المبنى والشارع",
+    "city": "المدينة",
+    "cityPlaceholder": "أدخل المدينة",
+    "state": "المحافظة",
+    "statePlaceholder": "أدخل المحافظة",
+    "postalCode": "الرمز البريدي",
+    "postalCodePlaceholder": "XXXXX",
+    "setAsDefault": "تعيين كعنوان افتراضي",
+    "addAddress": "إضافة عنوان آخر",
+    "continue": "متابعة",
+    "saving": "جاري الحفظ...",
+    "personalInfo": {
+      "title": "المعلومات الشخصية",
+      "description": "ساعدنا في تخصيص تجربتك"
+    },
+    "dateOfBirth": {
+      "label": "تاريخ الميلاد",
+      "description": "سيساعدنا هذا في تقديم عروض مناسبة لك",
+      "placeholder": "اختر تاريخ ميلادك"
+    },
+    "gender": {
+      "label": "النوع",
+      "description": "اختياري - يساعدنا في تحسين توصياتنا",
+      "male": "ذكر",
+      "female": "أنثى",
+      "other": "آخر"
+    },
+    "language": {
+      "title": "تفضيلات اللغة",
+      "description": "اختر لغتك المفضلة",
+      "label": "لغة الموقع",
+      "placeholder": "اختر اللغة",
+      "note": "يمكنك تغيير اللغة في أي وقت من إعدادات الملف الشخصي"
+    },
+    "notifications": {
+      "title": "إشعارات البريد الإلكتروني",
+      "description": "ابقَ على اطلاع بأحدث عروضنا"
+    },
+    "newsletter": {
+      "label": "الاشتراك في النشرة البريدية",
+      "description": "احصل على عروض حصرية ومنتجات جديدة وعروض خاصة في بريدك الإلكتروني"
+    },
+    "alert": {
+      "title": "أوشكت على الانتهاء!",
+      "description": "يمكنك تحديث هذه الإعدادات في أي وقت من ملفك الشخصي."
+    },
+    "buttons": {
+      "back": "رجوع",
+      "saving": "جاري الحفظ...",
+      "complete": "إكمال الإعداد"
+    },
+    "privacy": {
+      "text": "بإكمال ملفك الشخصي، فإنك توافق على",
+      "privacyPolicy": "سياسة الخصوصية",
+      "and": "و",
+      "terms": "شروط الخدمة"
+    }
+  },
   "errors": {
     "required": "هذا الحقل مطلوب.",
     "minLength": {
@@ -516,10 +586,12 @@
     "stateRequired": "اسم المحافظة مطلوب",
     "postalRequired": "الرمز البريدي مطلوب",
     "countryRequired": "اسم الدولة مطلوب",
-    "atLeastOneAddress": "يجب إدخال عنوان واحد على الأقل",
     "userNotFound": "المستخدم غير موجود",
     "invalidIdentifier": "يرجى إدخال بريد إلكتروني صحيح أو رقم هاتف مكون من 11 رقم",
     "selectRegisterMethod": "يرجى اختيار طريقة التسجيل",
-    "googleSignInFailed": "فشل تسجيل الدخول بحساب Google. يرجى المحاولة مرة أخرى."
+    "googleSignInFailed": "فشل تسجيل الدخول بحساب Google. يرجى المحاولة مرة أخرى.",
+    "phoneInvalid": "رقم الهاتف غير صحيح",
+    "atLeastOneAddress": "يجب إضافة عنوان واحد على الأقل",
+    "exactlyOneDefault": "يجب تحديد عنوان افتراضي واحد فقط"
   }
 }

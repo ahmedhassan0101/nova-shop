@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
-import { sendAccountDeletionEmail } from "@/lib/email-nodemailer";
+import { sendAccountDeletionEmail } from "@/types/email-nodemailer";
 import { authOptions } from "@/config/authOptions";
 
 export async function POST(req: NextRequest) {

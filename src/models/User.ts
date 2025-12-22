@@ -5,14 +5,14 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 // Defines the structure for a user's delivery or billing address.
 export interface IAddress {
   label: string;
-  fullName: string; // The recipient's full name
+  fullName: string;
   phone: string;
   street: string;
   city: string;
   state: string;
   postalCode: string;
   country: string;
-  isDefault: boolean; // Flag to designate this as the primary address
+  isDefault: boolean;
 }
 
 // --- 2. Main User Interface ---
@@ -68,20 +68,17 @@ export interface IUser extends Document {
 }
 
 // --- 3. Sub-Schema Definition ---
-const AddressSchema = new Schema<IAddress>(
-  {
-    label: { type: String, required: true },
-    fullName: { type: String, required: true },
-    phone: { type: String, required: true },
-    street: { type: String, required: true },
-    city: { type: String, required: true },
-    state: { type: String, required: true },
-    postalCode: { type: String, required: true },
-    country: { type: String, required: true },
-    isDefault: { type: Boolean, default: false },
-  },
-  { _id: false } // Addresses don't need their own MongoDB ID
-);
+const AddressSchema = new Schema<IAddress>({
+  label: { type: String, required: true },
+  fullName: { type: String, required: true },
+  phone: { type: String, required: true },
+  street: { type: String, required: true },
+  city: { type: String, required: true },
+  state: { type: String, required: true },
+  postalCode: { type: String, required: true },
+  country: { type: String, required: true },
+  isDefault: { type: Boolean, default: false },
+});
 
 // --- 4. Main Schema Definition ---
 const UserSchema = new Schema<IUser>(
@@ -143,7 +140,7 @@ const UserSchema = new Schema<IUser>(
     preferredLanguage: {
       type: String,
       enum: ["ar", "en"],
-      default: "ar",
+      default: "en",
     },
     newsletter: { type: Boolean, default: false },
 
@@ -165,8 +162,6 @@ const UserSchema = new Schema<IUser>(
     timestamps: true,
   }
 );
-
-
 
 // --- 5. Model Export ---
 // Standard Next.js/Mongoose pattern to prevent Model Redefinition errors

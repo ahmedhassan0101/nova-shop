@@ -8,7 +8,7 @@ import bcrypt from "bcryptjs";
 import GoogleProvider from "next-auth/providers/google";
 import mongoose from "mongoose";
 import { validateBody } from "@/lib/validation";
-import { ApiError } from "@/lib/apiResponse";
+// import { ApiError } from "@/lib/apiResponse";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -48,6 +48,7 @@ export const authOptions: NextAuthOptions = {
           const isPasswordValid = await bcrypt.compare(password, user.password);
 
           if (!isPasswordValid) {
+            console.log("🚀 ~ isPasswordValid:");
             throw new Error("auth.login.invalidCredentials");
           }
 
@@ -89,13 +90,15 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     // Runs when a user signs in
-    async signIn({ user, account, profile }) {
+    async signIn({ user, account }) {
       if (account?.provider === "google") {
         await connectDB();
+
         const existingUser = await User.findOne({ email: user.email });
+
         if (!existingUser) {
-          // Create a new user if not exists
-          await User.create({
+          // Create user in DB if this is the first Google login
+          const newUser = await User.create({
             name: user.name,
             email: user.email,
             image: user.image,
@@ -105,8 +108,10 @@ export const authOptions: NextAuthOptions = {
             profileCompletionStep: 1,
             lastLogin: new Date(),
           });
+          user.id = newUser._id!.toString();
         } else {
-          // Update last login for existing user
+          user.id = existingUser._id!.toString();
+          // Update last login time for existing user
           existingUser.lastLogin = new Date();
           await existingUser.save();
         }
@@ -114,13 +119,22 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
     // Customize JWT token
-    async jwt({ token, user, trigger, session }) {
+    async jwt({ token, user, trigger, session, account }) {
       // When first created (user signs in)
       if (user) {
         token.id = user.id;
         token.role = user.role;
         token.isProfileComplete = user.isProfileComplete;
         token.email = user.email;
+      }
+
+      if (account?.provider === "google" && token.email) {
+        await connectDB();
+        const userInDB = await User.findOne({ email: token.email });
+        if (userInDB) {
+          token.id = userInDB._id!.toString();
+          token.isProfileComplete = userInDB.isProfileComplete;
+        }
       }
 
       // When manually updated from client (triggered by "update")
@@ -132,37 +146,38 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     // Define what session looks like on client side
-    async session({ session, token }) {
-      if (token && token.email) {
-        await connectDB();
-
-        const userInDB = await User.findOne({ email: token.email }).lean();
-
-        if (!userInDB || !userInDB.isActive) {
-          return {
-            ...session,
-            user: undefined,
-            expires: new Date(0).toISOString(),
-          };
-        }
-
-        if (session.user) {
-          session.user.id = token.id as string;
-          session.user.role = token.role as string;
-          session.user.isProfileComplete = token.isProfileComplete as boolean;
-        }
-      }
-      return session;
-    },
     // async session({ session, token }) {
+    //   if (token) {
+    //     await connectDB();
 
-    //   if (token && session.user) {
-    //     session.user.id = token.id as string;
-    //     session.user.role = token.role as string;
-    //     session.user.isProfileComplete = token.isProfileComplete as boolean;
+    //     const userInDB = await User.findOne({ email: token.email }).lean();
+
+    //     if (!userInDB || !userInDB.isActive) {
+    //       return {
+    //         ...session,
+    //         user: undefined,
+    //         expires: new Date(0).toISOString(),
+    //       };
+    //     }
+
+    //     if (session.user && token?.id) {
+    //       session.user.id = userInDB._id.toString();
+    //       session.user.role = userInDB.role as string;
+    //       session.user.isProfileComplete =
+    //         userInDB.isProfileComplete as boolean;
+    //       session.user.profileCompletionStep = userInDB.profileCompletionStep;
+    //     }
     //   }
     //   return session;
     // },
+    async session({ session, token }) {
+      if (token && token.id && session.user) {
+        session.user.id = token.id as string;
+        session.user.role = token.role as string;
+        session.user.isProfileComplete = token.isProfileComplete as boolean;
+      }
+      return session;
+    },
   },
   pages: {
     signIn: "/auth/login",

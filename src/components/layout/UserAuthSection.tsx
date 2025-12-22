@@ -125,7 +125,6 @@ export default function UserAuthSection() {
   if (session) {
     return (
       <DropdownMenu>
-        {/* Trigger المطور: أفاتار مع إطار وسهم ناعم */}
         <DropdownMenuTrigger asChild className="hidden sm:flex">
           <Button variant="ghost" className="group h-10 gap-2 px-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
             <div className="relative">
@@ -135,14 +134,12 @@ export default function UserAuthSection() {
                   {session.user?.name?.charAt(0).toUpperCase() || "U"}
                 </AvatarFallback>
               </Avatar>
-              {/* نقطة خضراء تشير للنشاط */}
               <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-white bg-green-500 dark:border-slate-950"></span>
             </div>
             <ChevronDown className="h-4 w-4 text-slate-400 group-hover:text-primary transition-transform group-data-[state=open]:rotate-180" />
           </Button>
         </DropdownMenuTrigger>
 
-        {/* القائمة المنسدلة: تصميم Glassmorphism مع تباعد احترافي */}
         <DropdownMenuContent className="w-64 p-2 rounded-2xl shadow-2xl border-2 border-slate-100 dark:border-slate-800" align="end">
           <DropdownMenuLabel className="font-normal p-3">
             <div className="flex flex-col space-y-1">
@@ -199,7 +196,7 @@ export default function UserAuthSection() {
       variant="default" 
       size="sm" 
       asChild 
-      className="bg-primary hover:bg-primary/90 rounded-xl px-6 font-bold shadow-lg shadow-primary/20 transition-all active:scale-95"
+      className="bg-primary hover:bg-primary/90 rounded-bl-md px-6 font-bold shadow-lg shadow-primary/20 transition-all active:scale-95"
     >
       <Link href="/auth/login">{t("nav.login")}</Link>
     </Button>

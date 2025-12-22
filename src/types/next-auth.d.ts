@@ -16,6 +16,7 @@ declare module 'next-auth' {
       image?: string | null;
       role?: string;
       isProfileComplete?: boolean;
+      profileCompletionStep?: number
     };
   }
 }
